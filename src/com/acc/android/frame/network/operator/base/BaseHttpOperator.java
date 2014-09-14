@@ -46,9 +46,9 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 
 import com.acc.android.frame.manager.JsonManager;
-import com.acc.android.frame.model.RequestMethod;
 import com.acc.android.frame.model.UploadData;
 import com.acc.android.frame.model.UploadFile;
+import com.acc.android.frame.model.http.request.RequestMethod;
 import com.acc.android.frame.model.http.request.RequestObjectType;
 import com.acc.android.frame.util.ListUtil;
 import com.acc.android.frame.util.LoggerUtil;

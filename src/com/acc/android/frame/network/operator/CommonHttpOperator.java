@@ -2,7 +2,7 @@ package com.acc.android.frame.network.operator;
 
 import android.content.Context;
 
-import com.acc.android.frame.model.RequestMethod;
+import com.acc.android.frame.model.http.request.RequestMethod;
 import com.acc.android.frame.model.http.response.GeoAddress;
 import com.acc.android.frame.network.api.ACCApi;
 import com.acc.android.frame.network.operator.base.BaseHttpOperator;
