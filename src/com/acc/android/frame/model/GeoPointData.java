@@ -1,5 +1,7 @@
 package com.acc.android.frame.model;
 
+import com.acc.frame.model.MGeoPoint;
+
 public class GeoPointData {
 	private MGeoPoint mGeoPoint;
 	private String address;

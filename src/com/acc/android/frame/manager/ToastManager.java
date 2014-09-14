@@ -3,6 +3,8 @@ package com.acc.android.frame.manager;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.acc.android.frame.util.LoggerUtil;
+
 public class ToastManager {
 	private static ToastManager instance;
 	private final Context context;
@@ -35,6 +37,33 @@ public class ToastManager {
 		Toast.makeText(context, StringId, Toast.LENGTH_LONG).show();
 	}
 
+	public void shortToast(Object informationObject) {
+		this.shortToast(LoggerUtil.getLogString(informationObject));
+	}
+
+	public void shortToast(Object tagObject, Object informationObject) {
+		this.shortToast(LoggerUtil.getLogString(tagObject, informationObject));
+	}
+
+	public void shortToast(Object tagObject, String informationPrefixString,
+			Object informationObject) {
+		this.shortToast(LoggerUtil.getLogString(tagObject,
+				informationPrefixString, informationObject));
+	}
+
+	public void longToast(Object informationObject) {
+		this.longToast(LoggerUtil.getLogString(informationObject));
+	}
+
+	public void longToast(Object tagObject, Object informationObject) {
+		this.longToast(LoggerUtil.getLogString(tagObject, informationObject));
+	}
+
+	public void longToast(Object tagObject, String informationPrefixString,
+			Object informationObject) {
+		this.longToast(LoggerUtil.getLogString(tagObject,
+				informationPrefixString, informationObject));
+	}
 	// @Override
 	// public void refresh() {
 	// }

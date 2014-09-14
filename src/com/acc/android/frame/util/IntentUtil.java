@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import com.acc.frame.util.ListUtil;
+
 public class IntentUtil {
 	public static void startIntent(Context context, Class intentClass,
 			Object... bundleObjects) {

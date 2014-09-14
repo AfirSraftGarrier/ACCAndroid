@@ -1,5 +1,7 @@
 package com.acc.android.frame.model;
 
+import com.acc.frame.model.Location;
+
 public class Result {
 	private Location location;
 	private AddressComponent addressComponent;

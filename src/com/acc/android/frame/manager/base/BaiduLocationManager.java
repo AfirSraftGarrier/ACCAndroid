@@ -8,7 +8,7 @@ import com.acc.android.frame.model.GeoStatus;
 import com.acc.android.frame.model.http.response.GeoAddress;
 import com.acc.android.frame.network.NetworkHelper;
 import com.acc.android.frame.network.operator.CommonHttpOperator;
-import com.acc.android.frame.util.StringUtil;
+import com.acc.frame.util.StringUtil;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;

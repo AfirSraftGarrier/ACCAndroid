@@ -2,6 +2,8 @@ package com.acc.android.frame.model;
 
 import android.graphics.drawable.Drawable;
 
+import com.acc.frame.model.MGeoPoint;
+
 public class BaiduMapData {
 	private MGeoPoint mGeoPoint;
 	private Drawable drawable;

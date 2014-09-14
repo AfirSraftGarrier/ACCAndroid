@@ -10,8 +10,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.acc.android.frame.util.ListUtil;
 import com.acc.android.frame.util.ResourceUtil;
+import com.acc.frame.util.ListUtil;
 
 public abstract class ACCBaseAdapter<T
 // , K

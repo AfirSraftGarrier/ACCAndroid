@@ -1,7 +1,7 @@
 package com.acc.android.frame.model.http.response;
 
 import com.acc.android.frame.model.Result;
-import com.acc.android.frame.model.Status;
+import com.acc.frame.model.Status;
 
 public class GeoAddress {
 	private Status status;

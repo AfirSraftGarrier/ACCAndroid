@@ -11,9 +11,10 @@ import java.util.Date;
 import android.util.Log;
 
 import com.acc.android.frame.manager.JsonManager;
-import com.acc.android.frame.util.constant.AppLibConstant;
+import com.acc.frame.util.base.BaseLoggerUtil;
+import com.acc.frame.util.constant.AppLibConstant;
 
-public class LoggerUtil {
+public class LoggerUtil extends BaseLoggerUtil {
 	// public static boolean LOG = false;
 	//
 	// public void enableLog() {

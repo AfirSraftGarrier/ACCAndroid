@@ -11,10 +11,10 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Looper;
 
-//import com.augurit.android.hfss.R;
-
-import com.acc.android.frame.util.ListUtil;
 import com.acc.android.frame.util.ResourceUtil;
+import com.acc.frame.util.ListUtil;
+
+//import com.augurit.android.hfss.R;
 
 public class CrashReportManager {
 	private static CrashReportManager instance;

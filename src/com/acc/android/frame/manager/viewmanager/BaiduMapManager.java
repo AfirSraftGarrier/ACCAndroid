@@ -13,23 +13,17 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 
 //import com.augurit.android.hfss.R;
-
-
-
-
-
-
 import com.acc.android.frame.manager.MLocationManager;
 import com.acc.android.frame.model.BaiduMapData;
 import com.acc.android.frame.model.GeoData;
 import com.acc.android.frame.model.GeoDataWithoutAddress;
 import com.acc.android.frame.model.MGeoData;
-import com.acc.android.frame.model.MGeoPoint;
-import com.acc.android.frame.util.ListUtil;
 import com.acc.android.frame.util.ResourceUtil;
 import com.acc.android.frame.util.asynctask.BasicAsyncTask;
 import com.acc.android.frame.util.callback.LocationCallback;
 import com.acc.android.frame.util.view.MMapView;
+import com.acc.frame.model.MGeoPoint;
+import com.acc.frame.util.ListUtil;
 import com.baidu.mapapi.map.ItemizedOverlay;
 import com.baidu.mapapi.map.MapController;
 import com.baidu.mapapi.map.MapView;

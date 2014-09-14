@@ -18,6 +18,7 @@ public class MLocationManager extends LocationManager {
 	private SystemLocationManager systemLocationManager;
 	private MGeoData currentMGeoData;
 	private Boolean isSureNeedGps;
+	private Boolean isSureNeedBaidu;
 
 	// private boolean isReaquesting;
 
@@ -64,7 +65,9 @@ public class MLocationManager extends LocationManager {
 	@Override
 	public void start() {
 		// this.locationManager.start();
-		this.baiduLocationManager.start();
+		if (this.isSureNeedBaidu) {
+			this.baiduLocationManager.start();
+		}
 		if (this.isSureNeedGps) {
 			this.systemLocationManager.start();
 		}
@@ -73,11 +76,15 @@ public class MLocationManager extends LocationManager {
 
 	@Override
 	public void stop() {
-		this.baiduLocationManager.stop();
+		if (this.isSureNeedBaidu) {
+			this.baiduLocationManager.stop();
+		}
 		if (this.isSureNeedGps) {
 			this.systemLocationManager.stop();
 		}
 		this.clearLocationCallback();
+		this.isSureNeedBaidu = true;
+		this.isSureNeedGps = true;
 		// this.mGeoData = null;
 		// this.locationManager.stop();
 	}
@@ -95,7 +102,9 @@ public class MLocationManager extends LocationManager {
 	@Override
 	public void request() {
 		this.currentMGeoData = null;
-		this.baiduLocationManager.request();
+		if (this.isSureNeedBaidu) {
+			this.baiduLocationManager.request();
+		}
 		if (this.isSureNeedGps) {
 			this.systemLocationManager.request();
 		}
@@ -133,7 +142,8 @@ public class MLocationManager extends LocationManager {
 			return;
 		}
 		if (this.currentMGeoData != null
-				&& this.currentMGeoData.getBaiduGeoData() != null
+				&& (!this.isSureNeedBaidu || this.currentMGeoData
+						.getBaiduGeoData() != null)
 				&& (!this.isSureNeedGps || (this.currentMGeoData
 						.getSystemGeoData() != null || this.currentMGeoData
 						.getBaiduGeoData().getGeoDataWithoutAddress()
@@ -151,7 +161,9 @@ public class MLocationManager extends LocationManager {
 	@Override
 	public void removeUpdates() {
 		// this.currentMGeoData = null;
-		this.baiduLocationManager.removeUpdates();
+		if (this.isSureNeedBaidu) {
+			this.baiduLocationManager.removeUpdates();
+		}
 		if (this.isSureNeedGps) {
 			this.systemLocationManager.removeUpdates();
 		}
@@ -163,29 +175,32 @@ public class MLocationManager extends LocationManager {
 	// }
 
 	private void rigitst() {
-		LocationCallback baiduLocationCallback = new LocationCallback() {
+		if (this.isSureNeedBaidu) {
+			LocationCallback baiduLocationCallback = new LocationCallback() {
 
-			@Override
-			public void receive(String address) {
-			}
+				@Override
+				public void receive(String address) {
+				}
 
-			@Override
-			public void receive(GeoData geoData) {
-				MLocationManager.this.makeSureInitGeoData();
-				// LogUtil.systemOut("22222222hhhhh");
-				// Toast.makeText(MLocationManager.this.context,
-				// "222222222hhhhh",
-				// Toast.LENGTH_SHORT).show();
-				// LogUtil.systemOut(geoData);
-				MLocationManager.this.currentMGeoData.setBaiduGeoData(geoData);
-				MLocationManager.this.checkLocationCallback();
-			}
+				@Override
+				public void receive(GeoData geoData) {
+					MLocationManager.this.makeSureInitGeoData();
+					// LogUtil.systemOut("22222222hhhhh");
+					// Toast.makeText(MLocationManager.this.context,
+					// "222222222hhhhh",
+					// Toast.LENGTH_SHORT).show();
+					// LogUtil.systemOut(geoData);
+					MLocationManager.this.currentMGeoData
+							.setBaiduGeoData(geoData);
+					MLocationManager.this.checkLocationCallback();
+				}
 
-			@Override
-			public void receive(GeoDataWithoutAddress geoPoint) {
-			}
-		};
-		this.baiduLocationManager.rigist(baiduLocationCallback);
+				@Override
+				public void receive(GeoDataWithoutAddress geoPoint) {
+				}
+			};
+			this.baiduLocationManager.rigist(baiduLocationCallback);
+		}
 		if (this.isSureNeedGps) {
 			LocationCallback systemLocationCallback = new LocationCallback() {
 
@@ -219,6 +234,7 @@ public class MLocationManager extends LocationManager {
 		this.baiduLocationManager = BaiduLocationManager.getInstance(context);
 		this.systemLocationManager = SystemLocationManager.getInstance(context);
 		this.isSureNeedGps = true;
+		this.isSureNeedBaidu = true;
 	}
 
 	// public Boolean getSureNeedGps() {
@@ -227,6 +243,13 @@ public class MLocationManager extends LocationManager {
 
 	public void setSureNeedGps(Boolean sureNeedGps) {
 		this.isSureNeedGps = sureNeedGps;
+		// if (!sureNeedGps) {
+		// this.systemLocationManager = null;
+		// }
+	}
+
+	public void setSureNeedBaidu(Boolean sureNeedBaidu) {
+		this.isSureNeedBaidu = sureNeedBaidu;
 		// if (!sureNeedGps) {
 		// this.systemLocationManager = null;
 		// }

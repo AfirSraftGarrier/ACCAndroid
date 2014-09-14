@@ -50,11 +50,11 @@ import com.acc.android.frame.model.UploadData;
 import com.acc.android.frame.model.UploadFile;
 import com.acc.android.frame.model.http.request.RequestMethod;
 import com.acc.android.frame.model.http.request.RequestObjectType;
-import com.acc.android.frame.util.ListUtil;
 import com.acc.android.frame.util.LoggerUtil;
-import com.acc.android.frame.util.constant.AppLibConstant;
-import com.acc.android.frame.util.constant.HttpConstant;
 import com.acc.android.frame.util.constant.UploadConstant;
+import com.acc.frame.util.ListUtil;
+import com.acc.frame.util.constant.AppLibConstant;
+import com.acc.frame.util.constant.HttpConstant;
 
 public abstract class BaseHttpOperator {
 	// private HttpParams httpParams;

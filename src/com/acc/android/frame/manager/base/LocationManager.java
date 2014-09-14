@@ -5,8 +5,8 @@ import java.util.List;
 import android.content.Context;
 
 import com.acc.android.frame.model.GeoData;
-import com.acc.android.frame.util.ListUtil;
 import com.acc.android.frame.util.callback.LocationCallback;
+import com.acc.frame.util.ListUtil;
 
 public abstract class LocationManager {
 	protected List<LocationCallback> locationCallbacks;
