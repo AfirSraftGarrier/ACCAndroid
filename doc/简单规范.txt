@@ -1,0 +1,3 @@
+1 日志都要用LogUtil.
+2 Toas都要用ToastManager.
+3 res下id的命名规范。
