@@ -1,3 +1,16 @@
 1 日志都要用LogUtil.
 2 Toas都要用ToastManager.
 3 res下id的命名规范。
+4 字符串都用常量表示。
+5 命名一个变量规则：
+ 1）功能名+变量类型
+  String toastString（这里是toast+String）
+  Activity loginActivity（这里是login+Activity）
+ 2）layout命名规则
+  a）
+   LoginActivity的layout命名为login.xml
+   SearchResultActivity的layout命名为search_result.xml
+ 3）必须是驼峰区分单词
+ 4）id的命名：layout名+组件类型缩写+功能名
+  a)
+  	login.xml里面的注册按钮可以这样：login_btn_regist
