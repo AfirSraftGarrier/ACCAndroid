@@ -10,8 +10,9 @@
   a）
    LoginActivity的layout命名为login.xml
    SearchResultActivity的layout命名为search_result.xml
- 3）首字母大写，必须是驼峰区分单词
- 4）id的命名：layout名+组件类型缩写+功能名
+ 3）首字母大写，必须是驼峰区分单词。
+ 4）id的命名：layout名+组件类型缩写+功能名。
   a)
-  	login.xml里面的注册按钮可以这样：login_btn_regist
-6 尽量不要在声明的时候初始化变量，内部变量最好private,内部方法最好private
+  	login.xml里面的注册按钮可以这样：login_btn_regist。
+6 尽量不要在声明的时候初始化变量，内部变量最好private,内部方法最好private。
+7 修改功能的时候尽量不要覆盖，尽量copy一份，将原来的命名为old,并放到old文件夹下。
