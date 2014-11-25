@@ -1,0 +1,26 @@
+what,kind,bundleId,bundleVersion,description,time
+processors,sysinfo,,,"8",1336355776656
+java.runtime.name,sysinfo,,,"Java(TM) SE Runtime Environment",1336355776656
+java.runtime.version,sysinfo,,,"1.6.0_13-b03",1336355776656
+java.specification.name,sysinfo,,,"Java Platform API Specification",1336355776656
+java.specification.vendor,sysinfo,,,"Sun Microsystems Inc.",1336355776656
+java.specification.version,sysinfo,,,"1.6",1336355776656
+java.vendor,sysinfo,,,"Sun Microsystems Inc.",1336355776656
+java.version,sysinfo,,,"1.6.0_13",1336355776656
+java.vm.info,sysinfo,,,"mixed mode",1336355776656
+java.vm.name,sysinfo,,,"Java HotSpot(TM) Client VM",1336355776656
+java.vm.specification.name,sysinfo,,,"Java Virtual Machine Specification",1336355776656
+java.vm.specification.vendor,sysinfo,,,"Sun Microsystems Inc.",1336355776656
+java.vm.specification.version,sysinfo,,,"1.0",1336355776656
+java.vm.vendor,sysinfo,,,"Sun Microsystems Inc.",1336355776656
+java.vm.version,sysinfo,,,"11.3-b02",1336355776656
+activated,workbench,org.eclipse.ui.workbench,3.5.2.M20100113-0800,"",1336355776671
+activated,view,org.eclipse.ui.views,3.4.1.M20090826-0800,"org.eclipse.ui.views.ContentOutline",1336355776687
+deactivated,workbench,org.eclipse.ui.workbench,3.5.2.M20100113-0800,"",1336355776968
+activated,workbench,org.eclipse.ui.workbench,3.5.2.M20100113-0800,"",1336355781171
+activated,view,org.eclipse.ui,3.5.2.M20100120-0800,"org.eclipse.ui.internal.introview",1336355783828
+activated,view,org.eclipse.ui.views,3.4.1.M20090826-0800,"org.eclipse.ui.views.ContentOutline",1336355783828
+closed,view,org.eclipse.ui,3.5.2.M20100120-0800,"org.eclipse.ui.internal.introview",1336355783875
+activated,view,org.eclipse.ui.navigator.resources,3.4.1.M20090826-0800,"org.eclipse.ui.navigator.ProjectExplorer",1336355786875
+deactivated,workbench,org.eclipse.ui.workbench,3.5.2.M20100113-0800,"",1336355791968
+activated,workbench,org.eclipse.ui.workbench,3.5.2.M20100113-0800,"",1336355813984

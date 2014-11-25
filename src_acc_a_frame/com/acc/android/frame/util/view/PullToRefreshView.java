@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.acc.android.frame.util.ResourceUtil;
 import com.acc.android.frame.util.TimeUtil;
+
 //import com.augurit.android.hfss.R;
 
 public class PullToRefreshView extends LinearLayout {

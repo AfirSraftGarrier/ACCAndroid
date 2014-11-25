@@ -50,7 +50,7 @@ import com.acc.android.frame.model.UploadData;
 import com.acc.android.frame.model.UploadFile;
 import com.acc.android.frame.model.http.request.RequestMethod;
 import com.acc.android.frame.model.http.request.RequestObjectType;
-import com.acc.android.frame.util.LoggerUtil;
+import com.acc.android.frame.util.LogUtil;
 import com.acc.android.frame.util.constant.UploadConstant;
 import com.acc.frame.util.ListUtil;
 import com.acc.frame.util.constant.AppLibConstant;
@@ -159,7 +159,7 @@ public abstract class BaseHttpOperator {
 	// }
 
 	private void initJsonManager(Context context) {
-		jsonManager = JsonManager.getInstance(context);
+		jsonManager = JsonManager.getInstance();
 	}
 
 	// private void initAPI(Context context) {
@@ -449,9 +449,9 @@ public abstract class BaseHttpOperator {
 		InputStream inputStream = null;
 		String resultString = null;
 		if (AppLibConstant.isUseLog()) {
-			LoggerUtil.info("actionUrl", actionUrl);
-			LoggerUtil.info("uploadData", uploadData);
-			LoggerUtil.info("sessionStr", sessionStr);
+			LogUtil.info("actionUrl", actionUrl);
+			LogUtil.info("uploadData", uploadData);
+			LogUtil.info("sessionStr", sessionStr);
 		}
 		try {
 			URL url = new URL(actionUrl);
@@ -467,7 +467,7 @@ public abstract class BaseHttpOperator {
 			httpURLConnection.setRequestProperty("Content-Type",
 					UploadConstant.MULTIPART_FORM_DATA + ";boundary="
 							+ UploadConstant.BOUNDARY);
-			httpURLConnection.setChunkedStreamingMode(0);
+			// httpURLConnection.setChunkedStreamingMode(0);
 			sessonInject(httpURLConnection);
 			dataOutputStream = new DataOutputStream(
 					httpURLConnection.getOutputStream());
@@ -508,7 +508,7 @@ public abstract class BaseHttpOperator {
 			BufferedReader br = new BufferedReader(isr);
 			resultString = br.readLine();
 			if (AppLibConstant.isUseLog()) {
-				LoggerUtil.info("resultString", resultString);
+				LogUtil.info("resultString", resultString);
 			}
 			// LogUtil.systemOut(resultString);
 		} catch (IOException e) {
@@ -542,7 +542,7 @@ public abstract class BaseHttpOperator {
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair(
 					HttpConstant.DEFAULT_KEY_REQUEST_PARAM, JsonManager
-							.getInstance(context).getJson(paramObject)));
+							.getInstance().getJson(paramObject)));
 			return getResultObject(url, params, requestMathod,
 					classOrTypeObject);
 		} else if (requestObjectType == RequestObjectType.STRING) {
@@ -950,7 +950,7 @@ public abstract class BaseHttpOperator {
 		PrintWriter out = null;
 		try {
 			if (AppLibConstant.isUseLog()) {
-				LoggerUtil.info(this, "Begin a request--->>>>>>>>>>");
+				LogUtil.info(this, "Begin a request--->>>>>>>>>>");
 			}
 			// try {
 			// url = URLEncoder.encode(url, HttpConstant.ENCODE);
@@ -969,9 +969,9 @@ public abstract class BaseHttpOperator {
 				// 56364.173164,12955.347386
 			}
 			if (AppLibConstant.isUseLog()) {
-				LoggerUtil.info(this, "url:", url);
-				LoggerUtil.info(this, "requestMathod:", requestMethod);
-				LoggerUtil.info(this, "paramObject:", paramObject);
+				LogUtil.info(this, "url:", url);
+				LogUtil.info(this, "requestMathod:", requestMethod);
+				LogUtil.info(this, "paramObject:", paramObject);
 			}
 			// url = url.replace(" ", "%20");
 			conn = (HttpURLConnection) new URL(url).openConnection();
@@ -1022,7 +1022,7 @@ public abstract class BaseHttpOperator {
 			inputStream = conn.getInputStream();
 			response = read(inputStream);
 			if (AppLibConstant.isUseLog()) {
-				LoggerUtil.info(this, "response:", response);
+				LogUtil.info(this, "response:", response);
 			}
 			if (this.sessionStr == null) {
 				Map<String, List<String>> cookies = conn.getHeaderFields();
@@ -1057,7 +1057,7 @@ public abstract class BaseHttpOperator {
 			// System.out.println("openUrl:response:" + response);
 		} catch (Exception e) {
 			if (AppLibConstant.isUseLog()) {
-				LoggerUtil.info(this,
+				LogUtil.info(this,
 						"End a request with exception below---XXXXXXXXXX");
 			}
 			e.printStackTrace();
@@ -1082,7 +1082,7 @@ public abstract class BaseHttpOperator {
 			}
 		}
 		if (AppLibConstant.isUseLog()) {
-			LoggerUtil.info(this, "End a request successfully---VVVVVVVVVV");
+			LogUtil.info(this, "End a request successfully---VVVVVVVVVV");
 		}
 		return response;
 	}
@@ -1097,7 +1097,7 @@ public abstract class BaseHttpOperator {
 		Bitmap bitmap = null;
 		try {
 			if (AppLibConstant.isUseLog()) {
-				LoggerUtil.info(this, "Begin a request--->>>>>>>>>>");
+				LogUtil.info(this, "Begin a request--->>>>>>>>>>");
 			}
 			// try {
 			// url = URLEncoder.encode(url, HttpConstant.ENCODE);
@@ -1116,9 +1116,9 @@ public abstract class BaseHttpOperator {
 				// 56364.173164,12955.347386
 			}
 			if (AppLibConstant.isUseLog()) {
-				LoggerUtil.info(this, "url:", url);
-				LoggerUtil.info(this, "requestMathod:", requestMethod);
-				LoggerUtil.info(this, "paramObject:", paramObject);
+				LogUtil.info(this, "url:", url);
+				LogUtil.info(this, "requestMathod:", requestMethod);
+				LogUtil.info(this, "paramObject:", paramObject);
 			}
 			// url = url.replace(" ", "%20");
 			conn = (HttpURLConnection) new URL(url).openConnection();
@@ -1167,7 +1167,7 @@ public abstract class BaseHttpOperator {
 			bitmap = BitmapFactory.decodeStream(inputStream);
 			// response = read(inputStream);
 			if (AppLibConstant.isUseLog()) {
-				LoggerUtil.info(this, "response:", bitmap == null);
+				LogUtil.info(this, "response:", bitmap == null);
 			}
 			if (this.sessionStr == null) {
 				Map<String, List<String>> cookies = conn.getHeaderFields();
@@ -1202,7 +1202,7 @@ public abstract class BaseHttpOperator {
 			// System.out.println("openUrl:response:" + response);
 		} catch (Exception e) {
 			if (AppLibConstant.isUseLog()) {
-				LoggerUtil.info(this,
+				LogUtil.info(this,
 						"End a request with exception below---XXXXXXXXXX");
 			}
 			e.printStackTrace();
@@ -1220,7 +1220,7 @@ public abstract class BaseHttpOperator {
 			}
 		}
 		if (AppLibConstant.isUseLog()) {
-			LoggerUtil.info(this, "End a request successfully---VVVVVVVVVV");
+			LogUtil.info(this, "End a request successfully---VVVVVVVVVV");
 		}
 		return bitmap;
 	}
@@ -1247,7 +1247,7 @@ public abstract class BaseHttpOperator {
 		byte[] bytes = null;
 		try {
 			if (AppLibConstant.isUseLog()) {
-				LoggerUtil.info(this, "Begin a request--->>>>>>>>>>");
+				LogUtil.info(this, "Begin a request--->>>>>>>>>>");
 			}
 			// try {
 			// url = URLEncoder.encode(url, HttpConstant.ENCODE);
@@ -1266,9 +1266,9 @@ public abstract class BaseHttpOperator {
 				// 56364.173164,12955.347386
 			}
 			if (AppLibConstant.isUseLog()) {
-				LoggerUtil.info(this, "url:", url);
-				LoggerUtil.info(this, "requestMathod:", requestMethod);
-				LoggerUtil.info(this, "paramObject:", paramObject);
+				LogUtil.info(this, "url:", url);
+				LogUtil.info(this, "requestMathod:", requestMethod);
+				LogUtil.info(this, "paramObject:", paramObject);
 			}
 			// url = url.replace(" ", "%20");
 			conn = (HttpURLConnection) new URL(url).openConnection();
@@ -1349,7 +1349,7 @@ public abstract class BaseHttpOperator {
 			// bitmap = BitmapFactory.decodeStream(inputStream);
 			// response = read(inputStream);
 			if (AppLibConstant.isUseLog()) {
-				LoggerUtil.info(this, "response:", bytes == null);
+				LogUtil.info(this, "response:", bytes == null);
 			}
 			if (this.sessionStr == null) {
 				Map<String, List<String>> cookies = conn.getHeaderFields();
@@ -1384,7 +1384,7 @@ public abstract class BaseHttpOperator {
 			// System.out.println("openUrl:response:" + response);
 		} catch (Exception e) {
 			if (AppLibConstant.isUseLog()) {
-				LoggerUtil.info(this,
+				LogUtil.info(this,
 						"End a request with exception below---XXXXXXXXXX");
 			}
 			if (httpReqestProgressListener != null) {
@@ -1413,7 +1413,7 @@ public abstract class BaseHttpOperator {
 			}
 		}
 		if (AppLibConstant.isUseLog()) {
-			LoggerUtil.info(this, "End a request successfully---VVVVVVVVVV");
+			LogUtil.info(this, "End a request successfully---VVVVVVVVVV");
 		}
 		return bytes;
 	}

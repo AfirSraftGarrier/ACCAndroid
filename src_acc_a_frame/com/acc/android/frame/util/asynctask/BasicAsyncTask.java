@@ -13,6 +13,7 @@ public abstract class BasicAsyncTask<T, K> extends AsyncTask<K, Void, T> {
 	private final Context context;
 	// private final String dataName;
 	private final boolean isShowDialog;
+	private final boolean isShowSystemToastString;
 	private final boolean isCancleAble;
 	private final String successToastString;
 	private final String failToastString;
@@ -28,6 +29,30 @@ public abstract class BasicAsyncTask<T, K> extends AsyncTask<K, Void, T> {
 	// ,
 	// GetDataFromNetAsyncTaskListener<T, K> getDataFromNetAsyncTaskListener
 	) {
+		// this.context = context;
+		// // this.dataName = dataName;
+		// this.isShowDialog = isShowDialog;
+		// this.isCancleAble = isCancelAble;
+		// this.loadingString = loadingString;
+		// this.successToastString = successToastString;
+		// this.failToastString = failToastString;
+		this(context,
+				// String dataName,
+				isShowDialog, isCancelAble, loadingString, successToastString,
+				failToastString, true);
+		// this.getDataFromNetAsyncTaskListener =
+		// getDataFromNetAsyncTaskListener;
+	}
+
+	public BasicAsyncTask(
+			Context context,
+			// String dataName,
+			boolean isShowDialog, boolean isCancelAble, String loadingString,
+			String successToastString, String failToastString,
+			boolean isShowSystemToastString
+	// ,
+	// GetDataFromNetAsyncTaskListener<T, K> getDataFromNetAsyncTaskListener
+	) {
 		this.context = context;
 		// this.dataName = dataName;
 		this.isShowDialog = isShowDialog;
@@ -35,6 +60,7 @@ public abstract class BasicAsyncTask<T, K> extends AsyncTask<K, Void, T> {
 		this.loadingString = loadingString;
 		this.successToastString = successToastString;
 		this.failToastString = failToastString;
+		this.isShowSystemToastString = isShowSystemToastString;
 		// this.getDataFromNetAsyncTaskListener =
 		// getDataFromNetAsyncTaskListener;
 	}
@@ -64,7 +90,7 @@ public abstract class BasicAsyncTask<T, K> extends AsyncTask<K, Void, T> {
 			return;
 		}
 		if (t != null) {
-			if (this.successToastString != null) {
+			if (this.successToastString != null && this.isShowSystemToastString) {
 				ToastManager.getInstance(context).shortToast(
 						this.successToastString);
 			}
@@ -72,7 +98,7 @@ public abstract class BasicAsyncTask<T, K> extends AsyncTask<K, Void, T> {
 			// .getDataFromNetAsyncTaskListener
 			.onSuccess(t);
 		} else {
-			if (this.successToastString != null) {
+			if (this.successToastString != null && this.isShowSystemToastString) {
 				ToastManager.getInstance(context).shortToast(
 						this.failToastString);
 			}

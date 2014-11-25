@@ -22,7 +22,7 @@ public abstract class ACCBaseAdapter<T
 	private final OnItemClickListener<T> onItemClickListener;
 	// protected ViewHolderCallBack<T, K> ViewHolderCallBack;
 	private final int itemLayoutId;
-	private final boolean isUseDefaultBackground;
+	protected boolean isUseDefaultBackground;
 
 	// protected int defaultTouchColor;
 
@@ -232,5 +232,17 @@ public abstract class ACCBaseAdapter<T
 		// imageManage2.displayImage(viewHolder.iv, record.getItemImage(),
 		// R.drawable.image_indicator, 100, 100);
 		return convertView;
+	}
+
+	public void clear() {
+		if (!ListUtil.isEmpty(this.values)) {
+			this.values.clear();
+		}
+	}
+
+	public void add(List<T> ts) {
+		if (!ListUtil.isEmpty(ts)) {
+			this.values.addAll(ts);
+		}
 	}
 }

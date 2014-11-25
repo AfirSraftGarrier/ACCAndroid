@@ -16,7 +16,8 @@ public class GeoData {
 		return geoDataWithoutAddress;
 	}
 
-	public void setGeoDataWithoutAddress(GeoDataWithoutAddress geoDataWithoutAddress) {
+	public void setGeoDataWithoutAddress(
+			GeoDataWithoutAddress geoDataWithoutAddress) {
 		this.geoDataWithoutAddress = geoDataWithoutAddress;
 	}
 }

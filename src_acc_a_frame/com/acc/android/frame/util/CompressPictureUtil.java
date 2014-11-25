@@ -19,7 +19,7 @@ public class CompressPictureUtil {
 	public static final boolean useOld = false;
 
 	public interface OnCompressPictureOverListener {
-		void onCompressPictureOver();
+		void onCompressPictureOver(String filePath);
 	}
 
 	public static void startAsyAsyncTaskOrNot(final Context context,
@@ -87,7 +87,7 @@ public class CompressPictureUtil {
 				// // 显示对话框
 				// dialog.show();
 			} else {
-				onCompressPictureOverListener.onCompressPictureOver();
+				onCompressPictureOverListener.onCompressPictureOver(filePath);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -114,7 +114,7 @@ public class CompressPictureUtil {
 			Toast.makeText(this.context, "压缩成功", Toast.LENGTH_SHORT).show();
 			dialog.dismiss();
 			// this.printFileSize(this.filePath);
-			this.onCompressPictureOverListener.onCompressPictureOver();
+			this.onCompressPictureOverListener.onCompressPictureOver(filePath);
 		}
 
 		private void printFileSize(String filePath) {

@@ -13,7 +13,7 @@ public abstract class GetAsyncTask<T, K> extends BasicAsyncTask<T, K> {
 	// getDataFromNetAsyncTaskListener;
 
 	public GetAsyncTask(Context context, String dataName, boolean isShowDialog,
-			boolean isCancelAble
+			boolean isCancelAble, boolean isShowSystemString
 	// ,
 	// GetDataFromNetAsyncTaskListener<T, K> getDataFromNetAsyncTaskListener
 	) {
@@ -22,7 +22,24 @@ public abstract class GetAsyncTask<T, K> extends BasicAsyncTask<T, K> {
 		// String failToastString = "";
 		super(context, isShowDialog, isCancelAble,
 				"正在联网获取" + dataName + "中...", dataName + "加载成功", dataName
-						+ "加载失败");
+						+ "加载失败", isShowSystemString);
+		// this.context = context;
+		// this.dataName = dataName;
+		// this.isShowDialog = isShowDialog;
+		// this.isCancleAble = isCancelAble;
+		// this.getDataFromNetAsyncTaskListener =
+		// getDataFromNetAsyncTaskListener;
+	}
+
+	public GetAsyncTask(Context context, String dataName, boolean isShowDialog,
+			boolean isCancelAble
+	// ,
+	// GetDataFromNetAsyncTaskListener<T, K> getDataFromNetAsyncTaskListener
+	) {
+		// String loadingString = "";
+		// String successToastString = "";
+		// String failToastString = "";
+		this(context, dataName, isShowDialog, isCancelAble, true);
 		// this.context = context;
 		// this.dataName = dataName;
 		// this.isShowDialog = isShowDialog;

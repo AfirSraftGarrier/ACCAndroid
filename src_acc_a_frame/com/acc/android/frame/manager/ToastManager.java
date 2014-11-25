@@ -3,7 +3,7 @@ package com.acc.android.frame.manager;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.acc.android.frame.util.LoggerUtil;
+import com.acc.android.frame.util.LogUtil;
 
 public class ToastManager {
 	private static ToastManager instance;
@@ -38,30 +38,30 @@ public class ToastManager {
 	}
 
 	public void shortToast(Object informationObject) {
-		this.shortToast(LoggerUtil.getLogString(informationObject));
+		this.shortToast(LogUtil.getLogString(informationObject));
 	}
 
 	public void shortToast(Object tagObject, Object informationObject) {
-		this.shortToast(LoggerUtil.getLogString(tagObject, informationObject));
+		this.shortToast(LogUtil.getLogString(tagObject, informationObject));
 	}
 
 	public void shortToast(Object tagObject, String informationPrefixString,
 			Object informationObject) {
-		this.shortToast(LoggerUtil.getLogString(tagObject,
+		this.shortToast(LogUtil.getLogString(tagObject,
 				informationPrefixString, informationObject));
 	}
 
 	public void longToast(Object informationObject) {
-		this.longToast(LoggerUtil.getLogString(informationObject));
+		this.longToast(LogUtil.getLogString(informationObject));
 	}
 
 	public void longToast(Object tagObject, Object informationObject) {
-		this.longToast(LoggerUtil.getLogString(tagObject, informationObject));
+		this.longToast(LogUtil.getLogString(tagObject, informationObject));
 	}
 
 	public void longToast(Object tagObject, String informationPrefixString,
 			Object informationObject) {
-		this.longToast(LoggerUtil.getLogString(tagObject,
+		this.longToast(LogUtil.getLogString(tagObject,
 				informationPrefixString, informationObject));
 	}
 	// @Override

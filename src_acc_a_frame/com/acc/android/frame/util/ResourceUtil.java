@@ -23,6 +23,11 @@ public class ResourceUtil {
 				paramContext.getPackageName());
 	}
 
+	public static int getAttrId(Context paramContext, String paramString) {
+		return paramContext.getResources().getIdentifier(paramString, "attr",
+				paramContext.getPackageName());
+	}
+
 	public static int getId(Context paramContext, String paramString) {
 		return paramContext.getResources().getIdentifier(paramString, "id",
 				paramContext.getPackageName());
@@ -32,5 +37,4 @@ public class ResourceUtil {
 		return paramContext.getResources().getIdentifier(paramString, "color",
 				paramContext.getPackageName());
 	}
-
 }

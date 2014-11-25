@@ -19,10 +19,17 @@ import com.acc.android.frame.util.TimeUtil;
 import com.acc.android.frame.util.view.WheelView;
 import com.acc.android.frame.util.view.WheelView.OnWheelChangedListener;
 import com.acc.android.frame.util.widget.adapter.NumericWheelAdapter;
+
 //import com.augurit.android.hfss.R;
 
 public class TimeViewManager {
 	private static TimeViewManager instance;
+
+	public interface OnValidateListener {
+		void onRight();
+
+		void onWrong();
+	}
 
 	private TimeViewManager() {
 	}
@@ -35,11 +42,23 @@ public class TimeViewManager {
 	}
 
 	public static boolean validateTimeEditText(EditText editText) {
+		return validateTimeEditText(editText, null);
+	}
+
+	public static boolean validateTimeEditText(EditText editText,
+			OnValidateListener onValidateListener) {
 		if (TimeUtil.parseAppDateEx(editText.getText().toString()) == null) {
-			editText.requestFocus();
-			editText.setError("时间格式不对");
+			if (onValidateListener != null) {
+				onValidateListener.onWrong();
+			} else {
+				editText.requestFocus();
+				editText.setError("时间格式不对");
+			}
 			return false;
 		} else {
+			if (onValidateListener != null) {
+				onValidateListener.onRight();
+			}
 			return true;
 		}
 	}
@@ -49,18 +68,38 @@ public class TimeViewManager {
 	}
 
 	public void rigistTimeAction(final EditText editText,
-			final Context context, Date date) {
+			final Context context, Date date,
+			final OnValidateListener onValidateListener) {
 		editText.setOnKeyListener(new OnKeyListener() {
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				TimeViewManager.this.validateTimeEditText(editText);
+				TimeViewManager.this.validateTimeEditText(editText,
+						onValidateListener);
 				return false;
 			}
 		});
 		// date = date == null ? new Date() : date;
 		editText.setText(TimeUtil.dateToAppStringEx(date));
 		// editText.setEnabled(false);
-		editText.setOnClickListener(new TimeOnClickListener(editText, context));
+		editText.setOnClickListener(new TimeOnClickListener(editText, context,
+				onValidateListener));
+	}
+
+	public void rigistTimeAction(final EditText editText,
+			final Context context, Date date) {
+		// editText.setOnKeyListener(new OnKeyListener() {
+		// @Override
+		// public boolean onKey(View v, int keyCode, KeyEvent event) {
+		// TimeViewManager.this.validateTimeEditText(editText);
+		// return false;
+		// }
+		// });
+		// // date = date == null ? new Date() : date;
+		// editText.setText(TimeUtil.dateToAppStringEx(date));
+		// // editText.setEnabled(false);
+		// editText.setOnClickListener(new TimeOnClickListener(editText,
+		// context));
+		this.rigistTimeAction(editText, context, date, null);
 	}
 
 	class TimeOnClickListener implements OnClickListener {
@@ -71,6 +110,7 @@ public class TimeViewManager {
 		private final Context context;
 		private View wheelViewContainerView;
 		private Builder builder;
+		private final OnValidateListener onValidateListener;
 
 		private void initWheelView() {
 			wheelViewContainerView = LayoutInflater.from(context).inflate(
@@ -123,6 +163,15 @@ public class TimeViewManager {
 							monthWheelView.getCurentItemValue())));
 			dayWheelView.setCurrentItem(0);
 			// dayWheelView.invalidate();
+		}
+
+		public String getRightTimeString(String timeString) {
+			Date date = TimeUtil.parseAppDateEx(editText.getText().toString());
+			if (date != null) {
+				return TimeUtil.dateToAppStringEx(date);
+			} else {
+				return "";
+			}
 		}
 
 		private void initWheelViewData() {
@@ -179,6 +228,10 @@ public class TimeViewManager {
 									+ getTimeString(dayWheelView
 											.getCurentItemValue()));
 							editText.setError(null);
+							if (TimeOnClickListener.this.onValidateListener != null) {
+								TimeOnClickListener.this.onValidateListener
+										.onRight();
+							}
 						}
 					});
 			builder.setNegativeButton("取消",
@@ -198,9 +251,11 @@ public class TimeViewManager {
 			}
 		}
 
-		public TimeOnClickListener(EditText editText, Context context) {
+		public TimeOnClickListener(EditText editText, Context context,
+				OnValidateListener onValidateListener) {
 			this.editText = editText;
 			this.context = context;
+			this.onValidateListener = onValidateListener;
 		}
 
 		private void init() {

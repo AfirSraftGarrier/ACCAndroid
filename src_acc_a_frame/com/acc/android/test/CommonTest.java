@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import com.acc.android.frame.network.NetworkHelper;
 import com.acc.android.frame.network.operator.CommonHttpOperator;
-import com.acc.android.frame.util.LoggerUtil;
+import com.acc.android.frame.util.LogUtil;
 
 public class CommonTest extends TestCase {
 
@@ -12,7 +12,7 @@ public class CommonTest extends TestCase {
 		// Assert.assertEquals(1, 1);
 		CommonHttpOperator commonHttpOperator = NetworkHelper.getInstance(null)
 				.getHttpOperator(CommonHttpOperator.class);
-		LoggerUtil.systemOut(commonHttpOperator);
+		LogUtil.systemOut(commonHttpOperator);
 	}
 
 	// public static void test2() {
