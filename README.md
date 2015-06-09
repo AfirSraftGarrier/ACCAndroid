@@ -1,6 +1,6 @@
 ###ACC android develop platform
 
-####ACC Java develop platform is a platform which focus on android development.
+####ACC android develop platform is a platform which focus on android development.
 
 ###Because it is the first time commit, for any question please write to my email: afirsraftgarrier@qq.com.
 
