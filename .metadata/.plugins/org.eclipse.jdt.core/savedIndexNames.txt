@@ -1,1 +1,0 @@
-INDEX VERSION 1.126+E:\广州城管执法系统\广州城管执法\Date\.metadata\.plugins\org.eclipse.jdt.core
