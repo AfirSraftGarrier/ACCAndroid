@@ -36,11 +36,4 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>src_acc_frame</name>
-			<type>2</type>
-			<location>D:/HOMEDATA/work/android/ACCFrame/src_acc_frame</location>
-		</link>
-	</linkedResources>
 </projectDescription>

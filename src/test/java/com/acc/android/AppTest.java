@@ -17,8 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-package com.acc.android.model.http.response;
+package com.acc.android;
 
-public enum ResponseStatus {
-	ILEGARG, EXCEPTION, FAIL, SUCCESS
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+public class AppTest extends TestCase {
+	public AppTest(String testName) {
+		super(testName);
+	}
+
+	public static Test suite() {
+		return new TestSuite(AppTest.class);
+	}
+
+	public void testApp() {
+		assertTrue(true);
+	}
 }
