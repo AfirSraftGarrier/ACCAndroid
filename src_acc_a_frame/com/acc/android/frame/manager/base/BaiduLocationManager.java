@@ -1,24 +1,44 @@
+/**
+ * 
+ * ACCAFrame - ACC Android Development Platform
+ * Copyright (c) 2014, AfirSraftGarrier, afirsraftgarrier@qq.com
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.acc.android.frame.manager.base;
 
 import android.content.Context;
 
-import com.acc.android.frame.model.GeoData;
-import com.acc.android.frame.model.GeoDataWithoutAddress;
-import com.acc.android.frame.model.GeoStatus;
 import com.acc.android.frame.model.http.response.GeoAddress;
 import com.acc.android.frame.network.NetworkHelper;
 import com.acc.android.frame.network.operator.CommonHttpOperator;
+import com.acc.frame.model.GeoData;
+import com.acc.frame.model.GeoDataWithoutAddress;
+import com.acc.frame.model.GeoStatus;
 import com.acc.frame.util.StringUtil;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.location.LocationClientOption.LocationMode;
 
 public class BaiduLocationManager extends LocationManager {
 	// private List<GPSCallback> gpsCallbacks;
 	private LocationClient locationClient;
 	private LocationListenner locationListenner;
-	private Thread requestAddressThread;
+	// private Thread requestAddressThread;
 	// private Context context;
 	private static BaiduLocationManager instance;
 
@@ -53,12 +73,12 @@ public class BaiduLocationManager extends LocationManager {
 		this.clearLocationCallback();
 	}
 
-	private void stopRequestAddressThread() {
-		if (this.requestAddressThread != null
-				&& this.requestAddressThread.isAlive()) {
-			this.requestAddressThread.interrupt();
-		}
-	}
+	// private void stopRequestAddressThread() {
+	// if (this.requestAddressThread != null
+	// && this.requestAddressThread.isAlive()) {
+	// this.requestAddressThread.interrupt();
+	// }
+	// }
 
 	// @Override
 	// public void rigist(GPSCallback gpsCallback) {
@@ -90,11 +110,12 @@ public class BaiduLocationManager extends LocationManager {
 
 	private void initLocationOption() {
 		LocationClientOption option = new LocationClientOption();
-		option.setOpenGps(true);
+		option.setLocationMode(LocationMode.Hight_Accuracy);
 		option.setCoorType("bd09ll");
+		option.setOpenGps(true);
 		option.setIsNeedAddress(true);
-		option.setScanSpan(1000);
-		option.setPriority(LocationClientOption.GpsFirst);
+		// option.setScanSpan(1000);
+		// option.setPriority(LocationClientOption.GpsFirst);
 		locationClient.setLocOption(option);
 	}
 
@@ -152,6 +173,9 @@ public class BaiduLocationManager extends LocationManager {
 			//
 			// } else {
 			GeoData geoData = new GeoData();
+			// System.out.println("addr:" + location.getAddrStr());
+			// System.out.println("addr11:" + location.getLatitude());
+			// System.out.println("addr22:" + location.getLongitude());
 			geoData.setAddress(location.getAddrStr());
 			GeoDataWithoutAddress geoDataWithoutAddress = new GeoDataWithoutAddress();
 			geoDataWithoutAddress.setAccuracy(location.getRadius());
@@ -165,9 +189,9 @@ public class BaiduLocationManager extends LocationManager {
 			// }
 		}
 
-		@Override
-		public void onReceivePoi(BDLocation poiLocation) {
-		}
+		// @Override
+		// public void onReceivePoi(BDLocation poiLocation) {
+		// }
 
 		private GeoStatus getGeoStatus(BDLocation location) {
 			int locType = location.getLocType();

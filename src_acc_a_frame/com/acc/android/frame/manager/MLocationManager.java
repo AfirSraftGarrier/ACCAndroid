@@ -1,3 +1,22 @@
+/**
+ * 
+ * ACCAFrame - ACC Android Development Platform
+ * Copyright (c) 2014, AfirSraftGarrier, afirsraftgarrier@qq.com
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.acc.android.frame.manager;
 
 import android.content.Context;
@@ -5,11 +24,11 @@ import android.content.Context;
 import com.acc.android.frame.manager.base.BaiduLocationManager;
 import com.acc.android.frame.manager.base.LocationManager;
 import com.acc.android.frame.manager.base.SystemLocationManager;
-import com.acc.android.frame.model.GeoData;
-import com.acc.android.frame.model.GeoDataWithoutAddress;
-import com.acc.android.frame.model.GeoStatus;
 import com.acc.android.frame.model.MGeoData;
-import com.acc.android.frame.util.callback.LocationCallback;
+import com.acc.frame.model.GeoData;
+import com.acc.frame.model.GeoDataWithoutAddress;
+import com.acc.frame.model.GeoStatus;
+import com.acc.frame.util.callback.LocationCallback;
 
 public class MLocationManager extends LocationManager {
 	private static MLocationManager instance;

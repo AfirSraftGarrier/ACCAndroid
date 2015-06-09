@@ -1,3 +1,22 @@
+/**
+ * 
+ * ACCAFrame - ACC Android Development Platform
+ * Copyright (c) 2014, AfirSraftGarrier, afirsraftgarrier@qq.com
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.acc.android.frame.util;
 
 import java.io.BufferedReader;
@@ -9,21 +28,43 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.util.Base64;
 
+import com.acc.android.frame.model.UploadFile;
+import com.acc.android.frame.util.constant.UploadConstant;
+import com.acc.frame.util.ListUtil;
+import com.acc.frame.util.constant.HttpConstant;
+
 public class FileUtil {
 	private static String PATH_ROOT;
+	public static String SECOND_PATH_ROOT;
+
 	// private static String PATH_CONFIG;
 	// private static String PATH_DATA;
-	private static String PATH_FILE;
-
-	private static String PATH_MAP_CONFIG;
-	private static String PATH_MAP_MAP;
+	// private static String PATH_FILE;
+	// private static String PATH_MAP_CONFIG;
+	// private static String PATH_MAP_MAP;
 
 	// private static String PATH_MAP_MAP_RESOURCE_IMAGES;
+
+	public static List<UploadFile> getUploadImageFiles(List<String> imagePaths) {
+		if (!ListUtil.isEmpty(imagePaths)) {
+			List<UploadFile> uploadFiles = ListUtil.getArrayList();
+			for (String imagePath : imagePaths) {
+				UploadFile uploadFile = new UploadFile();
+				uploadFile.setContentType(UploadConstant.JPG);
+				uploadFile.setName("file");
+				uploadFile.setFilePath(imagePath);
+				uploadFiles.add(uploadFile);
+			}
+			return uploadFiles;
+		}
+		return null;
+	}
 
 	public static byte[] readFileToBytes(String filename) {
 		InputStream in = null;
@@ -45,11 +86,17 @@ public class FileUtil {
 		return data;
 	}
 
-	public static String getStringFromFile(File file, String encoding) {
+	public static String getStringFromFile(File file
+	// , String encoding
+	) {
 		InputStreamReader read;
 		StringBuffer sb = new StringBuffer();
 		try {
-			read = new InputStreamReader(new FileInputStream(file), encoding);
+			read = new InputStreamReader(new FileInputStream(file),
+			// encoding == null ?
+					HttpConstant.ENCODE
+			// : encoding
+			);
 			BufferedReader bufferedReader = new BufferedReader(read);
 			String lineTXT = null;
 			while ((lineTXT = bufferedReader.readLine()) != null) {
@@ -89,7 +136,7 @@ public class FileUtil {
 		return str;
 	}
 
-	public static void saveStringToFile(File file, String string) {
+	public static boolean saveStringToFile(File file, String string) {
 		// if (string == null) {
 		// return;
 		// }
@@ -130,15 +177,16 @@ public class FileUtil {
 		//
 		// }
 		FileOutputStream fos;
-		String encoding = "utf-8";
+		// String encoding = "utf-8";
 		try {
 			if (!file.exists()) {
 				makeIfNotExistFileDir(file);
 			}
 			file.createNewFile();
 			fos = new FileOutputStream(file);
-			fos.write(string.getBytes(encoding));
+			fos.write(string.getBytes(HttpConstant.ENCODE));
 			fos.close();
+			return true;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -155,6 +203,7 @@ public class FileUtil {
 		// encoder.close();
 		// 关闭输出流
 		// fos.close();
+		return false;
 	}
 
 	// public static File getConfigFile(String fileName) {
@@ -166,17 +215,17 @@ public class FileUtil {
 	// }
 	//
 
-	public static File getMapConfigFile(String fileName) {
-		String mapConfigPathName = getPathMapConfig();
-		// makeIfNotExistDir(mapConf/igPathName);
-		return new File(mapConfigPathName + File.separator + fileName);
-	}
+	// public static File getMapConfigFile(String fileName) {
+	// String mapConfigPathName = getPathMapConfig();
+	// // makeIfNotExistDir(mapConf/igPathName);
+	// return new File(mapConfigPathName + File.separator + fileName);
+	// }
 
-	public static File getMapMapFile(String fileName) {
-		String mapMapPathName = getPathFile();
-		// makeIfNotExistDir(mapMapPathName);
-		return new File(mapMapPathName + File.separator + fileName);
-	}
+	// public static File getMapMapFile(String fileName) {
+	// String mapMapPathName = getPathFile();
+	// // makeIfNotExistDir(mapMapPathName);
+	// return new File(mapMapPathName + File.separator + fileName);
+	// }
 
 	public static String getPathRoot() {
 		if (PATH_ROOT == null) {
@@ -194,17 +243,19 @@ public class FileUtil {
 			} else {
 				PATH_ROOT = "";
 			}
-			PATH_ROOT += "/PDA/HF/";
+			PATH_ROOT += File.separator + "ACC" + File.separator
+					+ (SECOND_PATH_ROOT != null ? SECOND_PATH_ROOT : "COMMON");
+			makeIfNotExistFileRealDir(PATH_ROOT);
 		}
 		return PATH_ROOT;
 	}
 
-	public static String getPathFile() {
-		if (PATH_MAP_CONFIG == null) {
-			PATH_MAP_CONFIG = getPathRoot() + "file";
-		}
-		return PATH_MAP_CONFIG;
-	}
+	// public static String getPathFile() {
+	// if (PATH_MAP_CONFIG == null) {
+	// PATH_MAP_CONFIG = getPathRoot() + "file";
+	// }
+	// return PATH_MAP_CONFIG;
+	// }
 
 	public static boolean isFileExist(String fileName) {
 		File file = getFile(fileName);
@@ -216,42 +267,55 @@ public class FileUtil {
 	public static File getFile(String fileName) {
 		// String filePathName = getPathFile();
 		// makeIfNotExistDir(mapMapPathName);
-		return new File(getFileName(fileName));
+		return new File(getFilePath(fileName));
 	}
 
-	private static void makeSureInitDir(String dir) {
-		File file = new File(dir);
-		if (!file.exists()) {
-			// boolean isMakeSuccess =
-			file.mkdirs();
-			// LogUtil.systemOut("XXXXXXXXXXXXX");
-			// LogUtil.systemOut(isMakeSuccess);
-		}
+	// private static void makeSureInitDir(String dir) {
+	// File file = new File(dir);
+	// if (!file.exists()) {
+	// // boolean isMakeSuccess =
+	// file.mkdirs();
+	// // LogUtil.systemOut("XXXXXXXXXXXXX");
+	// // LogUtil.systemOut(isMakeSuccess);
+	// }
+	// }
+
+	public static String getFilePath(String fileName) {
+		return getPathRoot() + File.separator + fileName;
+		// makeSureInitDir(filePathName);
+		// return filePathName + fileName;
 	}
 
-	public static String getFileName(String fileName) {
-		String filePathName = getPathFile() + File.separator;
-		makeSureInitDir(filePathName);
-		return filePathName + fileName;
+	public static String getTimestampImageFilePath(String prefixString) {
+		// String sdfds = getFilePath((prefixString != null ? prefixString + "_"
+		// : "") + System.currentTimeMillis() + ".jpg");
+		// System.out.println(sdfds);
+		return getFilePath((prefixString != null ? prefixString + "_" : "")
+				+ System.currentTimeMillis() + ".jpg");
 	}
 
-	public static String getPathMapConfig() {
-		if (PATH_MAP_CONFIG == null) {
-			PATH_MAP_CONFIG = getPathRoot() + "MAP/CONFIG";
-		}
-		return PATH_MAP_CONFIG;
-	}
+	// public static File getTimestampImageFile(String prefixString) {
+	// return new File(getTimestampImageFilePath(prefixString));
+	// }
 
-	public static String getPathMapMap() {
-		if (PATH_MAP_MAP == null) {
-			PATH_MAP_MAP = getPathRoot() + "MAP/MAP";
-		}
-		return PATH_MAP_MAP;
-	}
+	//
+	// public static String getPathMapConfig() {
+	// if (PATH_MAP_CONFIG == null) {
+	// PATH_MAP_CONFIG = getPathRoot() + "MAP/CONFIG";
+	// }
+	// return PATH_MAP_CONFIG;
+	// }
+	//
+	// public static String getPathMapMap() {
+	// if (PATH_MAP_MAP == null) {
+	// PATH_MAP_MAP = getPathRoot() + "MAP/MAP";
+	// }
+	// return PATH_MAP_MAP;
+	// }
 
-	public static String getTestPath() {
-		return getPathMapMap() + "/resources/images/style_new/comb.png";
-	}
+	// public static String getTestPath() {
+	// return getPathMapMap() + "/resources/images/style_new/comb.png";
+	// }
 
 	// public static File getMainDir(String folderName) {
 	// String fileName = getRootPath() + "/AGCOM/PANYU" + folderName + "/";
@@ -270,8 +334,12 @@ public class FileUtil {
 	// }
 
 	private static void makeIfNotExistFileDir(File file) {
+		makeIfNotExistFileDir(file.getAbsolutePath());
+	}
+
+	public static void makeIfNotExistFileDir(String filePath) {
 		try {
-			String fileName = file.getAbsolutePath();
+			String fileName = filePath;
 			String fileDirName = fileName.substring(0,
 					fileName.lastIndexOf('/'));
 			File dirFile = new File(fileDirName);
@@ -286,8 +354,25 @@ public class FileUtil {
 		}
 	}
 
+	public static void makeIfNotExistFileRealDir(String filePath) {
+		try {
+			String fileName = filePath;
+			// String fileDirName = fileName.substring(0,
+			// fileName.lastIndexOf('/'));
+			File dirFile = new File(filePath);
+			if (!dirFile.exists()) {
+				if (android.os.Environment.getExternalStorageState().equals(
+						android.os.Environment.MEDIA_MOUNTED)) {
+					dirFile.mkdirs();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void saveMapBitmapFile(String fileName, Bitmap bitmap) {
-		File file = getMapMapFile(fileName);
+		File file = new File(fileName);
 		try {
 			if (!file.exists()) {
 				makeIfNotExistFileDir(file);
@@ -319,22 +404,22 @@ public class FileUtil {
 		}
 	}
 
-	public static boolean isMapBitmapFileExist(String fileName) {
-		File file = getMapMapFile(fileName);
-		return file.exists();
-	}
+	// public static boolean isMapBitmapFileExist(String fileName) {
+	// File file = getMapMapFile(fileName);
+	// return file.exists();
+	// }
 
-	public static InputStream getMapBitmapFileInputStream(String fileName) {
-		File file = getMapMapFile(fileName);
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(file);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return fis;
-	}
+	// public static InputStream getMapBitmapFileInputStream(String fileName) {
+	// File file = getMapMapFile(fileName);
+	// FileInputStream fis = null;
+	// try {
+	// fis = new FileInputStream(file);
+	// } catch (FileNotFoundException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// return fis;
+	// }
 
 	// public static Bitmap getBitmap(String urlString, String bitmapPath) {
 	// Bitmap targetBitmap = null;
@@ -370,4 +455,65 @@ public class FileUtil {
 	// .getInstance(context).getResources().getDisplayMetrics());
 	// return targetBitmapDrawable;
 	// }
+
+	public static boolean isFileExists(String filepath) {
+		if (filepath == null) {
+			return false;
+		}
+		File file = new File(filepath);
+		if (!file.exists()) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	public static String getFileRealName(String filepath) {
+		String[] nameStrings = filepath.split(File.separator);
+		return nameStrings[nameStrings.length - 1];
+	}
+
+	public static boolean deleteFile(String strFilePath) {
+		boolean result = false;
+		if (strFilePath == null || "".equals(strFilePath)) {
+			return result;
+		}
+		File file = new File(strFilePath);
+		if (file.isFile() && file.exists()) {
+			result = file.delete();
+		}
+		return result;
+	}
+
+	public static void copyFile(String oldPath, String newPath) {
+		InputStream inputStream = null;
+		FileOutputStream fileOutputStream = null;
+		try {
+			int byteread = 0;
+			File oldfile = new File(oldPath);
+			if (oldfile.exists()) {
+				makeIfNotExistFileDir(newPath);
+				inputStream = new FileInputStream(oldPath);
+				fileOutputStream = new FileOutputStream(newPath);
+				byte[] buffer = new byte[1444];
+				while ((byteread = inputStream.read(buffer)) != -1) {
+					fileOutputStream.write(buffer, 0, byteread);
+				}
+				// inputStream.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (inputStream != null) {
+					inputStream.close();
+				}
+				if (fileOutputStream != null) {
+					fileOutputStream.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

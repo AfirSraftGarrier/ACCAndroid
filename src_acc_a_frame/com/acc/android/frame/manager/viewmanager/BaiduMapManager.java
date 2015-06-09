@@ -1,3 +1,22 @@
+/**
+ * 
+ * ACCAFrame - ACC Android Development Platform
+ * Copyright (c) 2014, AfirSraftGarrier, afirsraftgarrier@qq.com
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.acc.android.frame.manager.viewmanager;
 
 import java.util.ArrayList;
@@ -15,15 +34,16 @@ import android.view.View.OnLongClickListener;
 //import com.augurit.android.hfss.R;
 import com.acc.android.frame.manager.MLocationManager;
 import com.acc.android.frame.model.BaiduMapData;
-import com.acc.android.frame.model.GeoData;
-import com.acc.android.frame.model.GeoDataWithoutAddress;
 import com.acc.android.frame.model.MGeoData;
 import com.acc.android.frame.util.ResourceUtil;
 import com.acc.android.frame.util.asynctask.BasicAsyncTask;
-import com.acc.android.frame.util.callback.LocationCallback;
 import com.acc.android.frame.util.view.MMapView;
+import com.acc.frame.model.GeoData;
+import com.acc.frame.model.GeoDataWithoutAddress;
 import com.acc.frame.model.MGeoPoint;
 import com.acc.frame.util.ListUtil;
+import com.acc.frame.util.callback.LocationCallback;
+import com.baidu.mapapi.BMapManager;
 import com.baidu.mapapi.map.ItemizedOverlay;
 import com.baidu.mapapi.map.MapController;
 import com.baidu.mapapi.map.MapView;
@@ -32,14 +52,25 @@ import com.baidu.mapapi.map.PopupOverlay;
 import com.baidu.mapapi.navi.BaiduMapAppNotSupportNaviException;
 import com.baidu.mapapi.navi.BaiduMapNavigation;
 import com.baidu.mapapi.navi.NaviPara;
+import com.baidu.mapapi.search.MKAddrInfo;
+import com.baidu.mapapi.search.MKBusLineResult;
+import com.baidu.mapapi.search.MKDrivingRouteResult;
+import com.baidu.mapapi.search.MKPoiResult;
+import com.baidu.mapapi.search.MKSearch;
+import com.baidu.mapapi.search.MKSearchListener;
+import com.baidu.mapapi.search.MKShareUrlResult;
+import com.baidu.mapapi.search.MKSuggestionResult;
+import com.baidu.mapapi.search.MKTransitRouteResult;
+import com.baidu.mapapi.search.MKWalkingRouteResult;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
 
 public class BaiduMapManager {
 	private MMapView mMapView;
+	private MKSearch mkSearch;
 	// private Button mClearBtn;
 	// private Button mResetBtn;
 	private MapController mapController;
-	private MyOverlay myOverlay;
+	private MOverlay myOverlay;
 	private PopupOverlay popupOverlay;
 	// private ArrayList<OverlayItem> overlayItems;
 	// private OverlayItem mCurItem = null;
@@ -59,6 +90,7 @@ public class BaiduMapManager {
 	// private Drawable noDoneYetDrawable;
 	private Drawable defaultDrawable;
 	private boolean isUsePopup = false;
+	private boolean isEnable = true;
 
 	private MapEventLisener mapEventListener;
 
@@ -66,6 +98,10 @@ public class BaiduMapManager {
 		void onClick(GeoPoint geoPoint);
 
 		void onLongClick(GeoPoint geoPoint);
+
+		void onGetAddress(String address);
+
+		void onGetGeo(GeoPoint geoPoint);
 	}
 
 	public void setMapEventListener(MapEventLisener mapEventListener) {
@@ -87,9 +123,10 @@ public class BaiduMapManager {
 	// private String[] taskPeopleNames;
 	// private int chooseTaskPeopleIndex;
 
-	public BaiduMapManager(Activity activity, Integer defaultZoom,
-			GeoPoint defaultCenterGeoPoint) {
-		this.initMapView(activity, defaultZoom, defaultCenterGeoPoint);
+	public BaiduMapManager(Activity activity, BMapManager bMapManager,
+			Integer defaultZoom, GeoPoint defaultCenterGeoPoint) {
+		this.initMapView(activity, bMapManager, defaultZoom,
+				defaultCenterGeoPoint);
 	}
 
 	// public void regist(Activity activity) {
@@ -594,33 +631,197 @@ public class BaiduMapManager {
 	// }).execute(deliveryData);
 	// }
 
+	// public void setZoomEnable(View v) {
+	// this.mapController.setZoomGesturesEnabled(((CheckBox) v).isChecked());
+	// }
+	//
+	// public void setScrollEnable(View v) {
+	// this.mapController.setScrollGesturesEnabled(((CheckBox) v).isChecked());
+	// }
+	//
+	// public void setRotateEnable(View v) {
+	// this.mapController.setRotationGesturesEnabled(((CheckBox) v)
+	// .isChecked());
+	// }
+	//
+	// public void setOverlookEnable(View v) {
+	// this.mapController.setOverlookingGesturesEnabled(((CheckBox) v)
+	// .isChecked());
+	// }
+	//
+	// public void setBuiltInZoomControllEnable(View v) {
+	// this.mMapView.setBuiltInZoomControls(((CheckBox) v).isChecked());
+	// }
+	//
+	// public void setDoubleClickEnable(View v) {
+	// this.mMapView.setDoubleClickZooming(((CheckBox) v).isChecked());
+	// }
+
 	public void disableMapAction() {
+		this.isEnable = false;
 		this.mapController.setOverlookingGesturesEnabled(false);
 		this.mapController.setRotateWithTouchEventCenterEnabled(false);
-		// this.mapController.setOverlookingGesturesEnabled(false);
 		this.mapController.setRotationGesturesEnabled(false);
 		this.mapController.setScrollGesturesEnabled(false);
 		this.mapController.setZoomGesturesEnabled(false);
-		// this.mapController.setZoomWithTouchEventCenterEnabled(false);
-		// this.mMapView.setEnabled(false);
 		this.mMapView.setClickable(false);
+		// this.mMapView.setLongClickable(false);
+		this.mMapView.setDoubleClickZooming(false);
 	}
 
-	private void initMapView(Activity activity, Integer defaultZoom,
-			GeoPoint defaultCenterGeoPoint) {
-		mMapView = (MMapView) activity.findViewById(ResourceUtil.getId(
+	public void enableMapAction() {
+		this.isEnable = true;
+		this.mapController.setOverlookingGesturesEnabled(true);
+		this.mapController.setRotateWithTouchEventCenterEnabled(true);
+		this.mapController.setRotationGesturesEnabled(true);
+		this.mapController.setScrollGesturesEnabled(true);
+		this.mapController.setZoomGesturesEnabled(true);
+		this.mMapView.setDoubleClickZooming(true);
+		this.mMapView.setClickable(true);
+		// this.mMapView.setLongClickable(true);
+	}
+
+	public void reverseGeocode(GeoPoint geoPoint) {
+		this.mkSearch.reverseGeocode(geoPoint);
+	}
+
+	public void geocode(String addr, String city) {
+		this.mkSearch.geocode(addr, city);
+	}
+
+	private void initMapView(final Activity activity, BMapManager bMapManager,
+			Integer defaultZoom, GeoPoint defaultCenterGeoPoint) {
+		this.mMapView = (MMapView) activity.findViewById(ResourceUtil.getId(
 				activity, "bmapView")
 		// R.id.bmapView
 				);
+		this.mMapView.setVisibility(View.VISIBLE);
+		this.mkSearch = new MKSearch();
+		this.mkSearch.init(bMapManager, new MKSearchListener() {
+			@Override
+			public void onGetPoiDetailSearchResult(int type, int error) {
+			}
+
+			@Override
+			public void onGetAddrResult(MKAddrInfo mkAddrInfo, int error) {
+				if (error != 0) {
+					// String str = String.format("错误号：%d", error);
+					// Toast.makeText(GeoCoderDemo.this, str,
+					// Toast.LENGTH_LONG)
+					// .show();
+					return;
+				}
+				// List<BaiduMapData> baiduMapDatas = new
+				// ArrayList<BaiduMapData>();
+				// BaiduMapData baiduMapData = new BaiduMapData();
+				// MGeoPoint mGeoPoint = new MGeoPoint();
+				// mGeoPoint.setLatitude(mkAddrInfo.geoPt.getLatitudeE6()
+				// / 10E6);
+				// mGeoPoint.setLongitude(mkAddrInfo.geoPt
+				// .getLongitudeE6() / 10E6);
+				// baiduMapData.setmGeoPoint(mGeoPoint);
+				// baiduMapData.setDrawable(activity.getResources()
+				// .getDrawable(R.drawable.search_location_32));
+				// baiduMapDatas.add(baiduMapData);
+				// 地图移动到该点
+				// BaiduMapManager.this.mapController
+				// .animateTo(mkAddrInfo.geoPt);
+				if (mkAddrInfo.type == MKAddrInfo.MK_GEOCODE) {
+					// 地理编码：通过地址检索坐标点
+					// String strInfo = String.format("纬度：%f 经度：%f",
+					// res.geoPt.getLatitudeE6() / 1e6,
+					// res.geoPt.getLongitudeE6() / 1e6);
+					if (BaiduMapManager.this.mapEventListener != null) {
+						BaiduMapManager.this.mapEventListener
+								.onGetGeo(mkAddrInfo.geoPt);
+					}
+					// Toast.makeText(GeoCoderDemo.this, strInfo,
+					// Toast.LENGTH_LONG).show();
+				}
+				if (mkAddrInfo.type == MKAddrInfo.MK_REVERSEGEOCODE) {
+					if (BaiduMapManager.this.mapEventListener != null) {
+						BaiduMapManager.this.mapEventListener
+								.onGetAddress(mkAddrInfo.strAddr);
+					}
+					// 反地理编码：通过坐标点检索详细地址及周边poi
+					// String strInfo = res.strAddr;
+					// Toast.makeText(GeoCoderDemo.this, strInfo,
+					// Toast.LENGTH_LONG).show();
+
+				}
+				if (true) {
+					return;
+				}
+				// 生成ItemizedOverlay图层用来标注结果点
+				ItemizedOverlay<OverlayItem> itemOverlay = new ItemizedOverlay<OverlayItem>(
+						null, mMapView);
+				// 生成Item
+				OverlayItem item = new OverlayItem(mkAddrInfo.geoPt, "kk", null);
+				// 得到需要标在地图上的资源
+				// Drawable marker = getResources().getDrawable(
+				// R.drawable.icon_markf);
+				// // 为maker定义位置和边界
+				// marker.setBounds(0, 0, marker.getIntrinsicWidth(),
+				// marker.getIntrinsicHeight());
+				// 给item设置marker
+				// item.setMarker(marker);
+				// 在图层上添加item
+				itemOverlay.addItem(item);
+
+				// 清除地图其他图层
+				mMapView.getOverlays().clear();
+				// 添加一个标注ItemizedOverlay图层
+				mMapView.getOverlays().add(itemOverlay);
+				// 执行刷新使生效
+				mMapView.refresh();
+			}
+
+			@Override
+			public void onGetPoiResult(MKPoiResult res, int type, int error) {
+
+			}
+
+			@Override
+			public void onGetDrivingRouteResult(MKDrivingRouteResult res,
+					int error) {
+			}
+
+			@Override
+			public void onGetTransitRouteResult(MKTransitRouteResult res,
+					int error) {
+			}
+
+			@Override
+			public void onGetWalkingRouteResult(MKWalkingRouteResult res,
+					int error) {
+			}
+
+			@Override
+			public void onGetBusDetailResult(MKBusLineResult result, int iError) {
+			}
+
+			@Override
+			public void onGetSuggestionResult(MKSuggestionResult res, int arg1) {
+			}
+
+			@Override
+			public void onGetShareUrlResult(MKShareUrlResult result, int type,
+					int error) {
+				// TODO Auto-generated method stub
+
+			}
+
+		});
 		// mClearBtn = (Button) findViewById(R.id.clear);
 		// mResetBtn = (Button) findViewById(R.id.reset);
-		mapController = mMapView.getController();
-		mapController.enableClick(true);
+		this.mapController = mMapView.getController();
+		this.mapController.enableClick(true);
+		this.mMapView.setBuiltInZoomControls(true);
 		if (defaultZoom != null) {
-			mapController.setZoom(defaultZoom);
+			this.mapController.setZoom(defaultZoom);
 		}
 		if (defaultCenterGeoPoint != null) {
-			mapController.setCenter(defaultCenterGeoPoint);
+			this.mapController.setCenter(defaultCenterGeoPoint);
 		}
 		// int defaultZoom, GeoPoint defaultCenterGeoPoint.setZoom(20);
 		// mMapController.setScrollGesturesEnabled(false);
@@ -638,7 +839,7 @@ public class BaiduMapManager {
 		/**
 		 * 创建自定义overlay
 		 */
-		myOverlay = new MyOverlay(null, mMapView);
+		this.myOverlay = new MOverlay(null, mMapView);
 
 		/**
 		 * 保存所有item，以便overlay在reset后重新添加
@@ -660,12 +861,13 @@ public class BaiduMapManager {
 
 			@Override
 			public boolean onLongClick(View view) {
-				if (BaiduMapManager.this.mapEventListener != null) {
+				if (BaiduMapManager.this.isEnable
+						&& BaiduMapManager.this.mapEventListener != null) {
 					BaiduMapManager.this.mapEventListener
 							.onLongClick(BaiduMapManager.this
 									.getCurrentTouchGeoPoint());
 				}
-				return false;
+				return true;
 			}
 		});
 		this.mMapView.setOnClickListener(new OnClickListener() {
@@ -900,19 +1102,20 @@ public class BaiduMapManager {
 
 	// @Override
 	public void onPause() {
-		mMapView.onPause();
+		this.mMapView.onPause();
 		// super.onPause();
 	}
 
 	// @Override
 	public void onResume() {
-		mMapView.onResume();
+		this.mMapView.onResume();
 		// super.onResume();
 	}
 
 	// @Override
 	public void onDestroy() {
-		mMapView.destroy();
+		this.mMapView.destroy();
+		this.mkSearch.destory();
 		// super.onDestroy();
 	}
 
@@ -928,9 +1131,9 @@ public class BaiduMapManager {
 		mMapView.onRestoreInstanceState(savedInstanceState);
 	}
 
-	public class MyOverlay extends ItemizedOverlay {
+	public class MOverlay extends ItemizedOverlay {
 
-		public MyOverlay(Drawable defaultMarker, MapView mapView) {
+		public MOverlay(Drawable defaultMarker, MapView mapView) {
 			super(defaultMarker, mapView);
 		}
 
@@ -1098,6 +1301,32 @@ public class BaiduMapManager {
 	// public GeoPoint getGeoPoint(int x, int y) {
 	// return this.mapView.;
 	// }
+
+	public void animateTo(GeoPoint geoPoint) {
+		this.mapController.animateTo(geoPoint);
+	}
+
+	public void animateTo(GeoPoint geoPoint, Drawable drawable) {
+		// LogUtil.systemOut(geoPoint);
+		if (geoPoint == null || drawable == null) {
+			return;
+		}
+		// System.out.println("x:" + geoPoint.getLatitudeE6() + "y:"
+		// + geoPoint.getLongitudeE6());
+		this.myOverlay.removeAll();
+		if (this.isUsePopup) {
+			this.popupOverlay.hidePop();
+		}
+		OverlayItem overlayItem = new OverlayItem(geoPoint, null, null);
+		overlayItem.setMarker(drawable != null ? drawable
+				: this.defaultDrawable);
+		this.myOverlay.addItem(overlayItem);
+		// this.geoPoints.add(geoPoint);
+		this.mapController.setZoom(100);
+		this.animateTo(geoPoint);
+		// LogUtil.systemOut("++++++--------");
+		this.mMapView.refresh();
+	}
 
 	public void updateMapView(List<BaiduMapData> baiduMapDatas) {
 		this.myOverlay.removeAll();

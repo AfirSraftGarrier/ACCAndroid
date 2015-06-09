@@ -1,3 +1,22 @@
+/**
+ * 
+ * ACCAFrame - ACC Android Development Platform
+ * Copyright (c) 2014, AfirSraftGarrier, afirsraftgarrier@qq.com
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.acc.android.frame.util;
 
 import java.io.ByteArrayInputStream;
@@ -25,6 +44,13 @@ public class CompressPictureUtil {
 	public static void startAsyAsyncTaskOrNot(final Context context,
 			final String filePath,
 			final OnCompressPictureOverListener onCompressPictureOverListener) {
+		startAsyAsyncTaskOrNot(context, filePath, filePath,
+				onCompressPictureOverListener);
+	}
+
+	public static void startAsyAsyncTaskOrNot(final Context context,
+			final String filePath, final String resultPath,
+			final OnCompressPictureOverListener onCompressPictureOverListener) {
 		// CommonInitDataUtil.initSetData(context);
 		try {
 			// int fileAvalible = new FileInputStream(new File(filePath))
@@ -47,8 +73,14 @@ public class CompressPictureUtil {
 				// public void onClick(DialogInterface dialog,
 				// int which) {
 				// finish();
+				// if(AppConstant.FOR_BDP) {
+				// System.out.println("VVVVVV");
+				// System.out.println(filePath);
+				// System.out.println(resultPath);
 				new CompressPictureUtil.CompressPictureAsyncTask(context,
-						filePath, onCompressPictureOverListener).execute();
+						filePath, resultPath, onCompressPictureOverListener)
+						.execute();
+				// }
 				// ProblemUpload.this
 				// .addPhotoAndUpdateImageAdapter();
 				// }
@@ -87,7 +119,7 @@ public class CompressPictureUtil {
 				// // 显示对话框
 				// dialog.show();
 			} else {
-				onCompressPictureOverListener.onCompressPictureOver(filePath);
+				onCompressPictureOverListener.onCompressPictureOver(resultPath);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -99,12 +131,18 @@ public class CompressPictureUtil {
 		private ProgressDialog dialog;
 		private final Context context;
 		private final String filePath;
+		private final String resultPath;
 		private final OnCompressPictureOverListener onCompressPictureOverListener;
 
 		public CompressPictureAsyncTask(Context context, String filePath,
+				String resultPath,
 				OnCompressPictureOverListener onCompressPictureOverListener) {
 			this.context = context;
 			this.filePath = filePath;
+			this.resultPath = resultPath;
+			// System.out.println("CCCCCCCCCCCCCC");
+			// System.out.println(this.filePath);
+			// System.out.println(this.resultPath);
 			this.onCompressPictureOverListener = onCompressPictureOverListener;
 		}
 
@@ -114,7 +152,8 @@ public class CompressPictureUtil {
 			Toast.makeText(this.context, "压缩成功", Toast.LENGTH_SHORT).show();
 			dialog.dismiss();
 			// this.printFileSize(this.filePath);
-			this.onCompressPictureOverListener.onCompressPictureOver(filePath);
+			this.onCompressPictureOverListener
+					.onCompressPictureOver(this.resultPath);
 		}
 
 		private void printFileSize(String filePath) {
@@ -131,7 +170,7 @@ public class CompressPictureUtil {
 					fileSize = fileSizeInK / 100.0d;
 					fileSizeStr = "" + fileSize + "K";
 				}
-				System.out.println("11111111111111now" + fileSizeStr);
+				// System.out.println("11111111111111now" + fileSizeStr);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch
 				// block
@@ -207,10 +246,20 @@ public class CompressPictureUtil {
 					// options.inJustDecodeBounds = false;
 					// Bitmap bitmap = BitmapFactory.decodeFile(filePath,
 					// options);
-
-					Bitmap bitmap = CompressUtil.getSmallBitmap(filePath);
-
-					FileOutputStream out = new FileOutputStream(this.filePath);
+					// System.out.println("VVVVVVVVVVVVVV");
+					// System.out.println(this.filePath);
+					// System.out.println(this.resultPath);
+					if (!this.resultPath.equals(this.filePath)) {
+						// System.out.println(this.filePath);
+						// System.out.println(this.resultPath);
+						FileUtil.copyFile(this.filePath, this.resultPath);
+					}
+					Bitmap bitmap = BitmapUtil.getSmallBitmap(this.filePath);
+					FileOutputStream out = new FileOutputStream(this.resultPath);
+					// System.out.println("XXXXXXXXXXXVVVVVVVVVVV123VVVVVVV");
+					// System.out.println(this.filePath);
+					// System.out.println(this.resultPath);
+					// System.out.println(this.resultPath);
 					bitmap.compress(Bitmap.CompressFormat.JPEG, 30, out);
 					// Bitmap rawBitmap = CompressUtil
 					// .getSmallBitmap(this.filePath);

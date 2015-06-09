@@ -1,3 +1,22 @@
+/**
+ * 
+ * ACCAFrame - ACC Android Development Platform
+ * Copyright (c) 2014, AfirSraftGarrier, afirsraftgarrier@qq.com
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.acc.android.frame.util.widget.adapter.base;
 
 import java.util.List;
@@ -23,6 +42,16 @@ public abstract class ACCBaseAdapter<T
 	// protected ViewHolderCallBack<T, K> ViewHolderCallBack;
 	private final int itemLayoutId;
 	protected boolean isUseDefaultBackground;
+	private Integer tagId;
+	private int actionPosition;
+
+	public int getActionPosition() {
+		return this.actionPosition;
+	}
+
+	public void setActionPosition(int position) {
+		this.actionPosition = position;
+	}
 
 	// protected int defaultTouchColor;
 
@@ -53,6 +82,12 @@ public abstract class ACCBaseAdapter<T
 		// this.ViewHolderCallBack = viewHolderCallBack;
 		this.itemLayoutId = itemLayoutId;
 		this.isUseDefaultBackground = true;
+		this.tagId = ResourceUtil.getId(context, "tag_adapter_key");
+		if (this.tagId == null || this.tagId == 0) {
+			this.tagId = itemLayoutId;
+		}
+		// System.out.println("+++++++++++++");
+		// System.out.println(tagId);
 		// this.defaultTouchColor = defaultTouchColor == null ? R.color.gray
 		// : defaultTouchColor;
 		// this.tagKey = 1;
@@ -114,6 +149,10 @@ public abstract class ACCBaseAdapter<T
 			viewHolder.put(id, childView);
 		}
 		return (T) childView;
+	}
+
+	protected int getPosition(T t) {
+		return this.values.indexOf(t);
 	}
 
 	// }
@@ -178,8 +217,9 @@ public abstract class ACCBaseAdapter<T
 						ACCBaseAdapter.this.onItemClickListener
 								.onItemClick(ACCBaseAdapter.this.values
 										.get((Integer) v.getTag(// R.id.tag_adapter_key
-												ResourceUtil.getId(context,
-														"tag_adapter_key"))));
+												// ResourceUtil.getId(context,
+												// "tag_adapter_key")
+												tagId)));
 						// System.out.println(position);
 					}
 				}
@@ -190,9 +230,9 @@ public abstract class ACCBaseAdapter<T
 		}
 		convertView.setTag(
 		// R.id.tag_adapter_key
-				ResourceUtil.getId(context, "tag_adapter_key")
-				// this.tagKey
-				, position);
+		// ResourceUtil.getId(context, "tag_adapter_key")
+		// this.tagKey
+				tagId, position);
 		// else {
 		// holderObject = convertView.getTag();
 		// }
@@ -243,6 +283,30 @@ public abstract class ACCBaseAdapter<T
 	public void add(List<T> ts) {
 		if (!ListUtil.isEmpty(ts)) {
 			this.values.addAll(ts);
+			this.update();
+		}
+	}
+
+	public void update() {
+		this.notifyDataSetChanged();
+	}
+
+	public void add(T t) {
+		this.add(t, true);
+	}
+
+	public void addAtBegin(T t) {
+		this.add(t, false);
+	}
+
+	private void add(T t, boolean isEnd) {
+		if (t != null) {
+			if (isEnd) {
+				this.values.add(t);
+			} else {
+				this.values.add(0, t);
+			}
+			this.update();
 		}
 	}
 }

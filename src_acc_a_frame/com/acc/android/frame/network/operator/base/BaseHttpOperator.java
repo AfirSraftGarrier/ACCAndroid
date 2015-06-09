@@ -1,3 +1,22 @@
+/**
+ * 
+ * ACCAFrame - ACC Android Development Platform
+ * Copyright (c) 2014, AfirSraftGarrier, afirsraftgarrier@qq.com
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.acc.android.frame.network.operator.base;
 
 import java.io.BufferedReader;
@@ -50,11 +69,14 @@ import com.acc.android.frame.model.UploadData;
 import com.acc.android.frame.model.UploadFile;
 import com.acc.android.frame.model.http.request.RequestMethod;
 import com.acc.android.frame.model.http.request.RequestObjectType;
+import com.acc.android.frame.util.FileUtil;
 import com.acc.android.frame.util.LogUtil;
 import com.acc.android.frame.util.constant.UploadConstant;
 import com.acc.frame.util.ListUtil;
-import com.acc.frame.util.constant.AppLibConstant;
+import com.acc.frame.util.StreamUtil;
 import com.acc.frame.util.constant.HttpConstant;
+import com.acc.frame.util.listener.RequestListener;
+import com.acc.frame.util.listener.RequestListener.RequestFailReason;
 
 public abstract class BaseHttpOperator {
 	// private HttpParams httpParams;
@@ -169,14 +191,37 @@ public abstract class BaseHttpOperator {
 	// }
 
 	public <T> T getResultObject(String url, Object paramObject,
-			RequestMethod requestMathod, Object classOrTypeObject) {
-		return this.getResultObject(url, paramObject, requestMathod, false,
+			RequestMethod requestMethod, Object classOrTypeObject) {
+		return this.getResultObject(url, paramObject, requestMethod, false,
+				classOrTypeObject);
+	}
+
+	public <T> T getRequest(String url, Object paramObject,
+			Object classOrTypeObject) {
+		return this.getResultObject(url, paramObject, RequestMethod.GET, false,
+				classOrTypeObject);
+	}
+
+	public <T> T getRequest(String url, Object classOrTypeObject) {
+		return this.getResultObject(url, null, RequestMethod.GET, false,
+				classOrTypeObject);
+	}
+
+	public <T> T postRequest(String url, Object paramObject,
+			Object classOrTypeObject) {
+		return this.getResultObject(url, paramObject, RequestMethod.POST,
+				false, classOrTypeObject);
+	}
+
+	public <T> T multiRequest(String url, Object paramObject,
+			Object classOrTypeObject) {
+		return this.getResultObject(url, paramObject, RequestMethod.POST, true,
 				classOrTypeObject);
 	}
 
 	// public <T> T tempGetResultObject(String url, Object paramObject,
-	// RequestMethod requestMathod, Object classOrTypeObject) {
-	// return this.tempGetResultObject(url, paramObject, requestMathod, false,
+	// RequestMethod requestMethod, Object classOrTypeObject) {
+	// return this.tempGetResultObject(url, paramObject, requestMethod, false,
 	// classOrTypeObject);
 	// }
 
@@ -214,11 +259,12 @@ public abstract class BaseHttpOperator {
 					.append("name=\"" + uploadFile.getName() + "\";")
 					// + tagString
 					.append("filename=\""
-							+ uploadFile.getFilePath()
-									.substring(
-											uploadFile.getFilePath()
-													.lastIndexOf("\\") + 1,
-											uploadFile.getFilePath().length())
+							+ FileUtil.getFileRealName(uploadFile.getFilePath())
+							// uploadFile.getFilePath()
+							// .substring(
+							// uploadFile.getFilePath()
+							// .lastIndexOf("/") + 1,
+							// uploadFile.getFilePath().length())
 							+ "\";")
 					.append(UploadConstant.LINEEND)
 					.append("Content-Type:\"" + uploadFile.getContentType()
@@ -448,11 +494,11 @@ public abstract class BaseHttpOperator {
 		DataOutputStream dataOutputStream = null;
 		InputStream inputStream = null;
 		String resultString = null;
-		if (AppLibConstant.isUseLog()) {
-			LogUtil.info("actionUrl", actionUrl);
-			LogUtil.info("uploadData", uploadData);
-			LogUtil.info("sessionStr", sessionStr);
-		}
+		// if (AppLibConstant.isUseLog()) {
+		LogUtil.info("actionUrl", actionUrl);
+		LogUtil.info("uploadData", uploadData);
+		LogUtil.info("sessionStr", sessionStr);
+		// }
 		try {
 			URL url = new URL(actionUrl);
 			httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -507,9 +553,9 @@ public abstract class BaseHttpOperator {
 			InputStreamReader isr = new InputStreamReader(inputStream, "utf-8");
 			BufferedReader br = new BufferedReader(isr);
 			resultString = br.readLine();
-			if (AppLibConstant.isUseLog()) {
-				LogUtil.info("resultString", resultString);
-			}
+			// if (AppLibConstant.isUseLog()) {
+			LogUtil.info("resultString", resultString);
+			// }
 			// LogUtil.systemOut(resultString);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -536,14 +582,14 @@ public abstract class BaseHttpOperator {
 	// }
 
 	public <T> T getResultObject(String url, Object paramObject,
-			RequestObjectType requestObjectType, RequestMethod requestMathod,
+			RequestObjectType requestObjectType, RequestMethod requestMethod,
 			Object classOrTypeObject) {
 		if (requestObjectType == RequestObjectType.JSON) {
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
 			params.add(new BasicNameValuePair(
 					HttpConstant.DEFAULT_KEY_REQUEST_PARAM, JsonManager
 							.getInstance().getJson(paramObject)));
-			return getResultObject(url, params, requestMathod,
+			return getResultObject(url, params, requestMethod,
 					classOrTypeObject);
 		} else if (requestObjectType == RequestObjectType.STRING) {
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -552,16 +598,16 @@ public abstract class BaseHttpOperator {
 						HttpConstant.DEFAULT_KEY_REQUEST_PARAM, paramObject
 								.toString()));
 			}
-			return getResultObject(url, params, requestMathod,
+			return getResultObject(url, params, requestMethod,
 					classOrTypeObject);
 		} else {
-			return getResultObject(url, paramObject, requestMathod,
+			return getResultObject(url, paramObject, requestMethod,
 					classOrTypeObject);
 		}
 	}
 
 	// public <T> T tempGetResultObject(String url, Object paramObject,
-	// RequestMethod requestMathod, boolean isMultipart,
+	// RequestMethod requestMethod, boolean isMultipart,
 	// Object classOrTypeObject) {
 	// String responseString = null;
 	// if (isMultipart) {
@@ -570,7 +616,7 @@ public abstract class BaseHttpOperator {
 	// // return responseString;
 	// } else {
 	// // Map<String, String> paramMap = this.getParamMap(paramObject);
-	// responseString = this.tempoPenRequest(url, requestMathod,
+	// responseString = this.tempoPenRequest(url, requestMethod,
 	// // isMultipart,
 	// paramObject);
 	// if (responseString == null) {
@@ -607,7 +653,7 @@ public abstract class BaseHttpOperator {
 	// }
 
 	public <T> T getResultObject(String url, Object paramObject,
-			RequestMethod requestMathod, boolean isMultipart,
+			RequestMethod requestMethod, boolean isMultipart,
 			Object classOrTypeObject) {
 		String responseString = null;
 		if (isMultipart) {
@@ -615,7 +661,7 @@ public abstract class BaseHttpOperator {
 			// return responseString;
 		} else {
 			// Map<String, String> paramMap = this.getParamMap(paramObject);
-			responseString = this.openRequest(url, requestMathod,
+			responseString = this.openRequest(url, requestMethod,
 			// isMultipart,
 					paramObject);
 			if (responseString == null) {
@@ -707,7 +753,7 @@ public abstract class BaseHttpOperator {
 	// }
 
 	// public <T> T getResultObjectNew(String url, String paramObject,
-	// Map<String, String> paramMap, RequestMethod requestMathod,
+	// Map<String, String> paramMap, RequestMethod requestMethod,
 	// Object classOrTypeObject) {
 	// url = this.api.getUrl(url, paramMap);
 	// String responseString = null;
@@ -718,7 +764,7 @@ public abstract class BaseHttpOperator {
 	// // // return responseString;
 	// // } else {
 	// // // Map<String, String> paramMap = this.getParamMap(paramObject);
-	// // responseString = this.openRequest(url, requestMathod,
+	// // responseString = this.openRequest(url, requestMethod,
 	// // // isMultipart,
 	// // paramObject);
 	// // if (responseString == null) {
@@ -755,7 +801,7 @@ public abstract class BaseHttpOperator {
 	// }
 
 	// public <T> T getResultObject(String url, Object paramObject,
-	// Map<String, String> paramMap, RequestMethod requestMathod,
+	// Map<String, String> paramMap, RequestMethod requestMethod,
 	// boolean isMultipart, Object classOrTypeObject) {
 	// url = this.api.getUrl(url, paramMap);
 	// String responseString = null;
@@ -764,7 +810,7 @@ public abstract class BaseHttpOperator {
 	// // return responseString;
 	// } else {
 	// // Map<String, String> paramMap = this.getParamMap(paramObject);
-	// responseString = this.openRequest(url, requestMathod,
+	// responseString = this.openRequest(url, requestMethod,
 	// // isMultipart,
 	// paramObject);
 	// if (responseString == null) {
@@ -829,7 +875,7 @@ public abstract class BaseHttpOperator {
 	// // 56364.173164,12955.347386
 	// }
 	// LogUtil.info(this, "url:", url);
-	// LogUtil.info(this, "requestMathod:", requestMethod);
+	// LogUtil.info(this, "requestMethod:", requestMethod);
 	// LogUtil.info(this, "paramObject:", paramObject);
 	// // url = url.replace(" ", "%20");
 	// conn = (HttpURLConnection) new URL(url).openConnection();
@@ -949,9 +995,9 @@ public abstract class BaseHttpOperator {
 		String response = null;
 		PrintWriter out = null;
 		try {
-			if (AppLibConstant.isUseLog()) {
-				LogUtil.info(this, "Begin a request--->>>>>>>>>>");
-			}
+			// if (AppLibConstant.isUseLog()) {
+			LogUtil.info(this, "Begin a request--->>>>>>>>>>");
+			// }
 			// try {
 			// url = URLEncoder.encode(url, HttpConstant.ENCODE);
 			// } catch (UnsupportedEncodingException e) {
@@ -968,11 +1014,11 @@ public abstract class BaseHttpOperator {
 				// http://192.168.15.204:82/agcom/rest/roadRest/getBestRoad?id=2&xy=56536.156809,13853.484204
 				// 56364.173164,12955.347386
 			}
-			if (AppLibConstant.isUseLog()) {
-				LogUtil.info(this, "url:", url);
-				LogUtil.info(this, "requestMathod:", requestMethod);
-				LogUtil.info(this, "paramObject:", paramObject);
-			}
+			// if (AppLibConstant.isUseLog()) {
+			LogUtil.info(this, "url:", url);
+			LogUtil.info(this, "requestMethod:", requestMethod);
+			LogUtil.info(this, "paramObject:", paramObject);
+			// }
 			// url = url.replace(" ", "%20");
 			conn = (HttpURLConnection) new URL(url).openConnection();
 			// System.out
@@ -1021,9 +1067,9 @@ public abstract class BaseHttpOperator {
 			}
 			inputStream = conn.getInputStream();
 			response = read(inputStream);
-			if (AppLibConstant.isUseLog()) {
-				LogUtil.info(this, "response:", response);
-			}
+			// if (AppLibConstant.isUseLog()) {
+			LogUtil.info(this, "response:", response);
+			// }
 			if (this.sessionStr == null) {
 				Map<String, List<String>> cookies = conn.getHeaderFields();
 				// this.cookieHeader = conn.getg
@@ -1056,10 +1102,10 @@ public abstract class BaseHttpOperator {
 			}
 			// System.out.println("openUrl:response:" + response);
 		} catch (Exception e) {
-			if (AppLibConstant.isUseLog()) {
-				LogUtil.info(this,
-						"End a request with exception below---XXXXXXXXXX");
-			}
+			// if (AppLibConstant.isUseLog()) {
+			LogUtil.info(this,
+					"End a request with exception below---XXXXXXXXXX");
+			// }
 			e.printStackTrace();
 			return response;
 		} finally {
@@ -1081,9 +1127,9 @@ public abstract class BaseHttpOperator {
 				}
 			}
 		}
-		if (AppLibConstant.isUseLog()) {
-			LogUtil.info(this, "End a request successfully---VVVVVVVVVV");
-		}
+		// if (AppLibConstant.isUseLog()) {
+		LogUtil.info(this, "End a request successfully---VVVVVVVVVV");
+		// }
 		return response;
 	}
 
@@ -1096,9 +1142,9 @@ public abstract class BaseHttpOperator {
 		InputStream inputStream = null;
 		Bitmap bitmap = null;
 		try {
-			if (AppLibConstant.isUseLog()) {
-				LogUtil.info(this, "Begin a request--->>>>>>>>>>");
-			}
+			// if (AppLibConstant.isUseLog()) {
+			LogUtil.info(this, "Begin a request--->>>>>>>>>>");
+			// }
 			// try {
 			// url = URLEncoder.encode(url, HttpConstant.ENCODE);
 			// } catch (UnsupportedEncodingException e) {
@@ -1115,11 +1161,11 @@ public abstract class BaseHttpOperator {
 				// http://192.168.15.204:82/agcom/rest/roadRest/getBestRoad?id=2&xy=56536.156809,13853.484204
 				// 56364.173164,12955.347386
 			}
-			if (AppLibConstant.isUseLog()) {
-				LogUtil.info(this, "url:", url);
-				LogUtil.info(this, "requestMathod:", requestMethod);
-				LogUtil.info(this, "paramObject:", paramObject);
-			}
+			// if (AppLibConstant.isUseLog()) {
+			LogUtil.info(this, "url:", url);
+			LogUtil.info(this, "requestMethod:", requestMethod);
+			LogUtil.info(this, "paramObject:", paramObject);
+			// }
 			// url = url.replace(" ", "%20");
 			conn = (HttpURLConnection) new URL(url).openConnection();
 			// System.out
@@ -1166,9 +1212,9 @@ public abstract class BaseHttpOperator {
 			// .getInputStream());
 			bitmap = BitmapFactory.decodeStream(inputStream);
 			// response = read(inputStream);
-			if (AppLibConstant.isUseLog()) {
-				LogUtil.info(this, "response:", bitmap == null);
-			}
+			// if (AppLibConstant.isUseLog()) {
+			LogUtil.info(this, "response:", bitmap == null);
+			// }
 			if (this.sessionStr == null) {
 				Map<String, List<String>> cookies = conn.getHeaderFields();
 				// this.cookieHeader = conn.getg
@@ -1201,10 +1247,10 @@ public abstract class BaseHttpOperator {
 			}
 			// System.out.println("openUrl:response:" + response);
 		} catch (Exception e) {
-			if (AppLibConstant.isUseLog()) {
-				LogUtil.info(this,
-						"End a request with exception below---XXXXXXXXXX");
-			}
+			// if (AppLibConstant.isUseLog()) {
+			LogUtil.info(this,
+					"End a request with exception below---XXXXXXXXXX");
+			// }
 			e.printStackTrace();
 			return bitmap;
 		} finally {
@@ -1219,9 +1265,9 @@ public abstract class BaseHttpOperator {
 				}
 			}
 		}
-		if (AppLibConstant.isUseLog()) {
-			LogUtil.info(this, "End a request successfully---VVVVVVVVVV");
-		}
+		// if (AppLibConstant.isUseLog()) {
+		LogUtil.info(this, "End a request successfully---VVVVVVVVVV");
+		// }
 		return bitmap;
 	}
 
@@ -1246,9 +1292,9 @@ public abstract class BaseHttpOperator {
 		// Bitmap bitmap = null;
 		byte[] bytes = null;
 		try {
-			if (AppLibConstant.isUseLog()) {
-				LogUtil.info(this, "Begin a request--->>>>>>>>>>");
-			}
+			// if (AppLibConstant.isUseLog()) {
+			LogUtil.info(this, "Begin a request--->>>>>>>>>>");
+			// }
 			// try {
 			// url = URLEncoder.encode(url, HttpConstant.ENCODE);
 			// } catch (UnsupportedEncodingException e) {
@@ -1265,11 +1311,11 @@ public abstract class BaseHttpOperator {
 				// http://192.168.15.204:82/agcom/rest/roadRest/getBestRoad?id=2&xy=56536.156809,13853.484204
 				// 56364.173164,12955.347386
 			}
-			if (AppLibConstant.isUseLog()) {
-				LogUtil.info(this, "url:", url);
-				LogUtil.info(this, "requestMathod:", requestMethod);
-				LogUtil.info(this, "paramObject:", paramObject);
-			}
+			// if (AppLibConstant.isUseLog()) {
+			LogUtil.info(this, "url:", url);
+			LogUtil.info(this, "requestMethod:", requestMethod);
+			LogUtil.info(this, "paramObject:", paramObject);
+			// }
 			// url = url.replace(" ", "%20");
 			conn = (HttpURLConnection) new URL(url).openConnection();
 			// System.out
@@ -1348,9 +1394,9 @@ public abstract class BaseHttpOperator {
 			// .getInputStream());
 			// bitmap = BitmapFactory.decodeStream(inputStream);
 			// response = read(inputStream);
-			if (AppLibConstant.isUseLog()) {
-				LogUtil.info(this, "response:", bytes == null);
-			}
+			// if (AppLibConstant.isUseLog()) {
+			LogUtil.info(this, "response:", bytes == null);
+			// }
 			if (this.sessionStr == null) {
 				Map<String, List<String>> cookies = conn.getHeaderFields();
 				// this.cookieHeader = conn.getg
@@ -1383,10 +1429,10 @@ public abstract class BaseHttpOperator {
 			}
 			// System.out.println("openUrl:response:" + response);
 		} catch (Exception e) {
-			if (AppLibConstant.isUseLog()) {
-				LogUtil.info(this,
-						"End a request with exception below---XXXXXXXXXX");
-			}
+			// if (AppLibConstant.isUseLog()) {
+			LogUtil.info(this,
+					"End a request with exception below---XXXXXXXXXX");
+			// }
 			if (httpReqestProgressListener != null) {
 				httpReqestProgressListener.onRequestFail();
 			}
@@ -1412,9 +1458,9 @@ public abstract class BaseHttpOperator {
 				}
 			}
 		}
-		if (AppLibConstant.isUseLog()) {
-			LogUtil.info(this, "End a request successfully---VVVVVVVVVV");
-		}
+		// if (AppLibConstant.isUseLog()) {
+		LogUtil.info(this, "End a request successfully---VVVVVVVVVV");
+		// }
 		return bytes;
 	}
 
@@ -1444,15 +1490,15 @@ public abstract class BaseHttpOperator {
 		return sb.toString();
 	}
 
-	// private String openUrl(String url, RequestMethod requestMathod,
+	// private String openUrl(String url, RequestMethod requestMethod,
 	// Object paramObject) {
 	// LogUtil.info(this, "Begin a request--->>>>>>>>>>");
 	// LogUtil.info(this, "url:", url);
-	// LogUtil.info(this, "requestMathod:", requestMathod);
+	// LogUtil.info(this, "requestMethod:", requestMethod);
 	// LogUtil.info(this, "paramObject:", paramObject);
 	// String responseString = null;
 	// try {
-	// switch (requestMathod) {
+	// switch (requestMethod) {
 	// case GET:
 	// try {
 	// if (paramObject != null) {
@@ -1886,6 +1932,87 @@ public abstract class BaseHttpOperator {
 		// Log.v("strResult", strResult);
 		// System.out.println("+++++++++++++++" + url);
 		return strResult;
+	}
+
+	public byte[] getByteArray(String url, RequestMethod requestMethod,
+			Object paramObject, RequestListener fileDownloadListener) {
+		if (!this.hasInternet(context)) {
+			fileDownloadListener.onFail(RequestFailReason._NET);
+			return null;
+		}
+		HttpURLConnection httpURLConnection = null;
+		InputStream inputStream = null;
+		ByteArrayOutputStream byteArrayOutputStream = null;
+		try {
+			byte[] bytes = null;
+			LogUtil.info(this, "Begin a request--->>>>>>>>>>");
+			if (requestMethod == requestMethod.GET && paramObject != null) {
+				url = url + "?" + this.encodeUrlParam(paramObject);
+			}
+			LogUtil.info(this, "url:", url);
+			LogUtil.info(this, "requestMathod:", requestMethod);
+			LogUtil.info(this, "paramObject:", paramObject);
+			httpURLConnection = (HttpURLConnection) new URL(url)
+					.openConnection();
+			if (this.sessionStr != null) {
+				httpURLConnection.setRequestProperty("cookie", sessionStr);
+				// httpURLConnection.setRequestProperty("Accept-Encoding",
+				// "identity");
+			}
+			httpURLConnection.setConnectTimeout(5 * 1000);
+			if (requestMethod == RequestMethod.GET) {
+				httpURLConnection.setRequestMethod("GET");
+				// httpURLConnection.setRequestProperty("Content-Type",
+				// "application/x-www-form-urlencode");
+				httpURLConnection.setRequestProperty("Accept-Encoding",
+						"identity");
+				// System.out.println("BBBBBBBBBBVVVVVVVVVVV");
+				httpURLConnection.connect();
+			} else {
+				httpURLConnection.setRequestMethod("POST");
+				httpURLConnection.setDoOutput(true);
+				httpURLConnection.setUseCaches(false);
+				httpURLConnection.setRequestProperty("Content-Type",
+						"application/x-www-form-urlencode");
+				if (paramObject != null) {
+					httpURLConnection.getOutputStream().write(
+							this.encodeUrlParam(paramObject).getBytes(
+									HttpConstant.ENCODE));
+				}
+			}
+			double contentLength = httpURLConnection.getContentLength();
+			inputStream = httpURLConnection.getInputStream();
+			if (inputStream != null) {
+				byteArrayOutputStream = new ByteArrayOutputStream();
+				byte[] buf = new byte[128];
+				// System.out.println(contentLength);
+				int read = -1;
+				long downloadCount = 0;
+				while ((read = inputStream.read(buf)) != -1) {
+					byteArrayOutputStream.write(buf, 0, read);
+					downloadCount += read;
+					fileDownloadListener.onProgress(downloadCount,
+							contentLength);
+				}
+				bytes = byteArrayOutputStream.toByteArray();
+			}
+			LogUtil.info(this, "End a request successfully---VVVVVVVVVV");
+			LogUtil.info(this, "response:", bytes == null);
+			fileDownloadListener.onSuccess(bytes);
+			return bytes;
+		} catch (Exception e) {
+			LogUtil.info(this,
+					"End a request with exception below---XXXXXXXXXX");
+			fileDownloadListener.onFail(RequestFailReason.EXCEPTION);
+			e.printStackTrace();
+			return null;
+		} finally {
+			if (httpURLConnection != null) {
+				httpURLConnection.disconnect();
+			}
+			StreamUtil.closeStream(byteArrayOutputStream);
+			StreamUtil.closeStream(inputStream);
+		}
 	}
 
 	// public String doPost_2(String url, List<NameValuePair> params) {

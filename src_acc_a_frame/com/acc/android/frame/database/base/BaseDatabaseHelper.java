@@ -1,3 +1,22 @@
+/**
+ * 
+ * ACCAFrame - ACC Android Development Platform
+ * Copyright (c) 2014, AfirSraftGarrier, afirsraftgarrier@qq.com
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.acc.android.frame.database.base;
 
 import java.sql.SQLException;
@@ -73,7 +92,7 @@ public abstract class BaseDatabaseHelper extends OrmLiteSqliteOpenHelper {
 	) {
 		super(context, databaseName, null, SharedPreferencesManager
 				.getInstance(context).getInt(
-						ACCALibConstant.SHAREKEY_DATABASEVERSION, 0));
+						ACCALibConstant.SHAREKEY_DATABASEVERSION, 1));
 		this.initDaoMap(classList);
 		// Share
 		// this.context = context;
@@ -100,9 +119,9 @@ public abstract class BaseDatabaseHelper extends OrmLiteSqliteOpenHelper {
 		}
 	}
 
-	protected static BaseDatabaseHelper instance;
-
-	public abstract BaseDatabaseHelper getInstance(Context context);
+	// protected static BaseDatabaseHelper instance;
+	//
+	// public abstract BaseDatabaseHelper getInstance(Context context);
 
 	// public static DatabaseHelper getInstance(Context context,
 	// String databaseName, List<Class> classList) {
@@ -470,7 +489,12 @@ public abstract class BaseDatabaseHelper extends OrmLiteSqliteOpenHelper {
 	@Override
 	public <D extends Dao<T, ?>, T extends Object> D getDao(Class<T> clazz)
 			throws SQLException {
-		return null;
+		Dao dao = this.daoMap.get(clazz);
+		if (dao == null) {
+			dao = super.getDao(clazz);
+			this.daoMap.put(clazz, dao);
+		}
+		return (D) dao;
 	};
 
 	// public Dao getDao(Class<T> classT) throws SQLException{

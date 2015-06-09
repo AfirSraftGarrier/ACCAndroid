@@ -1,3 +1,22 @@
+/**
+ * 
+ * ACCAFrame - ACC Android Development Platform
+ * Copyright (c) 2014, AfirSraftGarrier, afirsraftgarrier@qq.com
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 package com.acc.android.frame.util.asynctask;
 
 import android.app.ProgressDialog;
@@ -5,22 +24,24 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.acc.android.frame.manager.ToastManager;
-import com.acc.android.frame.model.Response;
+import com.acc.frame.model.Response;
 
 public abstract class UploadAsyncTask<T> extends AsyncTask<T, Void, Response> {
 	private ProgressDialog progressDialog;
 	private final Context context;
 	private final String dataName;
+	private final String actionName;
 
 	// private final UploadDataToNetAsyncTaskListener<T>
 	// getDataFromNetAsyncTaskListener;
 
-	public UploadAsyncTask(Context context, String dataName
+	public UploadAsyncTask(Context context, String dataName, String actionName
 	// ,
 	// UploadDataToNetAsyncTaskListener<T> getDataFromNetAsyncTaskListener
 	) {
 		this.context = context;
 		this.dataName = dataName;
+		this.actionName = actionName == null ? "上报" : actionName;
 		// this.getDataFromNetAsyncTaskListener =
 		// getDataFromNetAsyncTaskListener;
 	}
@@ -30,14 +51,14 @@ public abstract class UploadAsyncTask<T> extends AsyncTask<T, Void, Response> {
 		super.onPostExecute(response);
 		this.dismissProgressDialog();
 		if (response.isSuccess()) {
-			ToastManager.getInstance(context)
-					.shortToast(this.dataName + "上报成功");
+			ToastManager.getInstance(context).shortToast(
+					this.dataName + actionName + "成功");
 			this
 			// .getDataFromNetAsyncTaskListener
 			.onSuccess();
 		} else {
-			ToastManager.getInstance(context)
-					.shortToast(this.dataName + "上报失败");
+			ToastManager.getInstance(context).shortToast(
+					this.dataName + actionName + "失败");
 			this
 			// .getDataFromNetAsyncTaskListener
 			.onFail();
@@ -70,7 +91,7 @@ public abstract class UploadAsyncTask<T> extends AsyncTask<T, Void, Response> {
 	protected void onPreExecute() {
 		super.onPreExecute();
 		this.prepareAndShowProgressDialog();
-		this.showProgressString("正在上报" + this.dataName + "中...");
+		this.showProgressString("正在" + this.actionName + this.dataName + "中...");
 	}
 
 	public abstract Response doUpload(T... params);
