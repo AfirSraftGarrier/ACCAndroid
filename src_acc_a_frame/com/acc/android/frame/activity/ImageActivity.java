@@ -101,6 +101,11 @@ public class ImageActivity extends Activity
 	public void onVedioCaptureResult(String localPath) {
 	}
 
+	@Override
+	protected void onDestroy() {
+		this.imageGroupView.onDestroy();
+	}
+
 	// @Override
 	// public void onImageCaptureResult(String localPath) {
 	//
