@@ -2,7 +2,7 @@
 
 ###For any question please write to my email: afirsraftgarrier@qq.com.
 
-To use it you can find [here].(http://mvnrepository.com/artifact/com.lianquna/acc-android/1.1.2)
+To use it you can find [here](http://mvnrepository.com/artifact/com.lianquna/acc-android/1.1.2).
 
 This is my [home page](http://www.befuncool.com).
 
