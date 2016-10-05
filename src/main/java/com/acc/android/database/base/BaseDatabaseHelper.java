@@ -29,6 +29,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.acc.android.manager.SharedPreferencesManager;
 import com.acc.android.util.constant.ACCALibConstant;
+import com.acc.java.util.ClassUtil;
 import com.acc.java.util.ListUtil;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
@@ -502,21 +503,74 @@ public abstract class BaseDatabaseHelper extends OrmLiteSqliteOpenHelper {
 	// return null;
 	// }
 
-	public void addDaoAll(Dao dao, List objects) throws SQLException {
-		for (Object object : objects) {
-			dao.create(object);
-		}
-	}
+	// private void addDaoAll(Dao dao, List objects) throws SQLException {
+	// if(dao == null || objects == null) {
+	// return;
+	// }
+	// for (Object object : objects) {
+	// dao.create(object);
+	// }
+	// }
+	//
+	// private void addDao(Dao dao, Object object) throws SQLException {
+	// if(dao == null || object == null) {
+	// return;
+	// }
+	// dao.create(object);
+	// }
 
-	public <T> void refreshDao(Dao dao, List objects) throws SQLException {
+	private <T> void refreshDao(Dao dao, List objects) throws SQLException {
 		if (ListUtil.isEmpty(objects)) {
 			return;
 		}
 		TableUtils.clearTable(getConnectionSource(), objects.get(0).getClass());
 		// this.deleteDaoAll(dao);
-		this.addDaoAll(dao, objects);
+		this.add(objects);
 	}
 
+	public void add(Object object) throws SQLException {
+		if (object == null) {
+			return;
+		}
+		if (object instanceof List) {
+			List objects = (List) object;
+			if (ListUtil.isEmpty(objects)) {
+				return;
+			} else {
+				Dao dao = this.getDao(objects.get(0).getClass());
+				if (dao == null) {
+					return;
+				}
+				for (Object tempObject : objects) {
+					dao.create(tempObject);
+				}
+			}
+		} else {
+			Dao dao = this.getDao(ClassUtil.getClass(object));
+			if (dao != null) {
+				dao.create(object);
+			}
+		}
+	}
+
+	public void refresh(Object object) throws SQLException {
+		if (object == null) {
+			return;
+		}
+		TableUtils
+				.clearTable(getConnectionSource(), ClassUtil.getClass(object));
+		this.add(object);
+	}
+
+	public void delete(Object object) throws SQLException {
+		if (object == null) {
+			return;
+		}
+		Dao dao = this.getDao(ClassUtil.getClass(object));
+		if (dao != null) {
+			dao.delete(object);
+		}
+	}
 	// @Override
 	// public synchronized SQLiteDatabase getWritableDatabase() {
 	// // if (TestConstant.isUseExistDatabase) {

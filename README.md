@@ -1,9 +1,9 @@
-###ACC android develop platform
+###ACC android develop platform is a platform to elegantly speed up android work.
 
-####ACC android develop platform is a platform which focus on android development.
+###For any question please write to my email: afirsraftgarrier@qq.com.
 
-###Because it is the first time commit, for any question please write to my email: afirsraftgarrier@qq.com.
+To use it you can find [here].(http://mvnrepository.com/artifact/com.lianquna/acc-android/1.1.2)
 
-   [My Home page](http://lianquna.com)
+This is my [home page](http://www.befuncool.com).
 
-   [My Tech Home page](http://blog.csdn.net/afirsraftgarrier)
+This is my [tech home page](https://github.com/AfirSraftGarrier).
